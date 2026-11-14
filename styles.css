@@ -7923,17 +7923,17 @@ html.has-welcome .welcome-screen.is-leaving {
   }
   @media (max-width: 1099px) {
     .compass-field.is-motion-armed .quad {
-      translate: 0 18px;
-      scale: 0.97;
-      transition:
-        opacity 380ms cubic-bezier(0.16, 1, 0.3, 1),
-        translate 440ms cubic-bezier(0.16, 1, 0.3, 1),
-        scale 440ms cubic-bezier(0.16, 1, 0.3, 1),
-        --shade 350ms ease,
-        --glow 350ms ease !important;
-    }
-    .compass-field.is-motion-armed .quad.is-wedge-live {
+      opacity: 1 !important;
       translate: 0 0;
+      scale: 1;
+    }
+    .compass-field.is-motion-armed .quad .quad-time,
+    .compass-field.is-motion-armed .quad .quad-title,
+    .compass-field.is-motion-armed .quad .quad-list,
+    .compass-field.is-motion-armed .quad .quad-desc,
+    .compass-field.is-motion-armed .quad .quad-cta {
+      opacity: 1 !important;
+      transform: none !important;
     }
   }
   .compass-field.is-motion-armed .quad.is-wedge-live {
