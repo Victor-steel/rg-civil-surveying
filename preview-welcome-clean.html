@@ -1,0 +1,671 @@
+<!DOCTYPE html>
+<html lang="en-GB">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover" />
+  <title>RG Civil Engineering & Surveying · Clean Living Welcome Screen</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+  <link href="https://fonts.googleapis.com/css2?family=DM+Mono:ital,wght@0,400;0,500;1,400&family=Space+Grotesk:wght@400;500;600;700&display=swap" rel="stylesheet" />
+  <style>
+    :root {
+      --yellow: #f5cf25;
+      --paper: #f4f6f0;
+      --mono: "DM Mono", ui-monospace, SFMono-Regular, Menlo, monospace;
+      --sans: "Space Grotesk", -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif;
+    }
+
+    * {
+      box-sizing: border-box;
+    }
+
+    html, body {
+      margin: 0;
+      padding: 0;
+      width: 100%;
+      height: 100%;
+      overflow: hidden;
+      background: #070b0d;
+      font-family: var(--sans);
+      color: var(--paper);
+      user-select: none;
+      -webkit-font-smoothing: antialiased;
+    }
+
+    .wc-container {
+      position: relative;
+      width: 100vw;
+      height: 100vh;
+      overflow: hidden;
+      perspective: 1000px;
+      cursor: pointer;
+    }
+
+    /* Ambient Cinematic Camera Breathe */
+    .wc-scene {
+      position: absolute;
+      inset: -4%;
+      width: 108%;
+      height: 108%;
+      transform-style: preserve-3d;
+      will-change: transform;
+      animation: cameraBreathe 16s ease-in-out infinite alternate;
+    }
+
+    @keyframes cameraBreathe {
+      0% {
+        transform: scale(1) translate3d(0, 0, 0);
+      }
+      100% {
+        transform: scale(1.04) translate3d(-0.8%, -1%, 0);
+      }
+    }
+
+    /* Base Sharp High-Res Background Image */
+    .wc-bg-base {
+      position: absolute;
+      inset: 0;
+      width: 100%;
+      height: 100%;
+      object-fit: cover;
+      object-position: center 54%;
+      filter: contrast(1.05) saturate(1.03) brightness(0.92);
+      pointer-events: none;
+    }
+
+    /* Real-Time Living River Water Current (feTurbulence + feDisplacementMap) */
+    .wc-water-layer {
+      position: absolute;
+      inset: 0;
+      width: 100%;
+      height: 100%;
+      object-fit: cover;
+      object-position: center 54%;
+      filter: url(#wcRiverFlow);
+      -webkit-mask-image: radial-gradient(ellipse 65% 52% at 34% 60%, #000 35%, rgba(0,0,0,0.65) 58%, transparent 78%);
+      mask-image: radial-gradient(ellipse 65% 52% at 34% 60%, #000 35%, rgba(0,0,0,0.65) 58%, transparent 78%);
+      mix-blend-mode: hard-light;
+      opacity: 0.9;
+      pointer-events: none;
+    }
+
+    /* River specular water glint */
+    .wc-water-shimmer {
+      position: absolute;
+      inset: 0;
+      pointer-events: none;
+      -webkit-mask-image: radial-gradient(ellipse 55% 45% at 35% 60%, #000 25%, transparent 70%);
+      mask-image: radial-gradient(ellipse 55% 45% at 35% 60%, #000 25%, transparent 70%);
+      background: linear-gradient(115deg, transparent 32%, rgba(245, 207, 37, 0.08) 48%, rgba(255, 255, 255, 0.14) 52%, transparent 68%);
+      background-size: 200% 200%;
+      animation: waterGlint 6.5s ease-in-out infinite;
+      mix-blend-mode: overlay;
+    }
+
+    @keyframes waterGlint {
+      0% { background-position: 100% 100%; opacity: 0.25; }
+      50% { opacity: 0.65; }
+      100% { background-position: 0% 0%; opacity: 0.25; }
+    }
+
+    /* Atmospheric Vignette grading */
+    .wc-vignette {
+      position: absolute;
+      inset: 0;
+      pointer-events: none;
+      background:
+        radial-gradient(ellipse at 50% 50%, rgba(7, 11, 13, 0.12) 0%, rgba(7, 11, 13, 0.52) 72%, #070b0d 100%),
+        linear-gradient(180deg, rgba(7, 11, 13, 0.65) 0%, rgba(7, 11, 13, 0.08) 35%, rgba(7, 11, 13, 0.82) 100%);
+    }
+
+    /* Clean Viewport Framing Brackets */
+    .wc-frame-bracket {
+      position: absolute;
+      inset: clamp(16px, 2.8vw, 36px);
+      pointer-events: none;
+      z-index: 10;
+    }
+    .wc-frame-bracket i {
+      position: absolute;
+      width: 24px;
+      height: 24px;
+      border: 0 solid rgba(245, 207, 37, 0.5);
+    }
+    .wc-frame-bracket i:nth-child(1) { top: 0; left: 0; border-top-width: 2px; border-left-width: 2px; }
+    .wc-frame-bracket i:nth-child(2) { top: 0; right: 0; border-top-width: 2px; border-right-width: 2px; }
+    .wc-frame-bracket i:nth-child(3) { bottom: 0; left: 0; border-bottom-width: 2px; border-left-width: 2px; }
+    .wc-frame-bracket i:nth-child(4) { bottom: 0; right: 0; border-bottom-width: 2px; border-right-width: 2px; }
+
+    /* Top Subtle Location Pill */
+    .wc-top-pill {
+      position: absolute;
+      top: clamp(24px, 3.6vw, 44px);
+      left: 50%;
+      transform: translateX(-50%);
+      z-index: 12;
+      display: inline-flex;
+      align-items: center;
+      gap: 8px;
+      padding: 6px 16px;
+      border-radius: 999px;
+      background: rgba(8, 13, 16, 0.68);
+      backdrop-filter: blur(12px);
+      -webkit-backdrop-filter: blur(12px);
+      border: 1px solid rgba(245, 207, 37, 0.28);
+      font-family: var(--mono);
+      font-size: 11px;
+      letter-spacing: 0.1em;
+      text-transform: uppercase;
+      color: rgba(244, 246, 240, 0.88);
+      pointer-events: none;
+    }
+
+    .wc-live-dot {
+      width: 7px;
+      height: 7px;
+      border-radius: 50%;
+      background: #25d366;
+      box-shadow: 0 0 8px #25d366;
+      animation: livePulse 2s ease-in-out infinite;
+    }
+
+    @keyframes livePulse {
+      0%, 100% { opacity: 1; transform: scale(1); }
+      50% { opacity: 0.4; transform: scale(0.85); }
+    }
+
+    /* Ambient River Sound Toggle Pill */
+    .wc-audio-toggle {
+      position: absolute;
+      top: clamp(20px, 3.2vw, 40px);
+      right: clamp(20px, 3.2vw, 40px);
+      z-index: 20;
+      display: inline-flex;
+      align-items: center;
+      gap: 10px;
+      padding: 8px 18px;
+      border-radius: 999px;
+      background: rgba(8, 13, 16, 0.76);
+      backdrop-filter: blur(12px);
+      -webkit-backdrop-filter: blur(12px);
+      border: 1px solid rgba(245, 207, 37, 0.35);
+      color: var(--paper);
+      font-family: var(--mono);
+      font-size: 11px;
+      letter-spacing: 0.08em;
+      text-transform: uppercase;
+      cursor: pointer;
+      transition: all 0.2s ease;
+      box-shadow: 0 6px 20px rgba(0, 0, 0, 0.55);
+    }
+    .wc-audio-toggle:hover {
+      border-color: var(--yellow);
+      background: rgba(14, 22, 26, 0.9);
+      transform: translateY(-1px);
+    }
+    .wc-audio-toggle.is-playing {
+      border-color: #25d366;
+      box-shadow: 0 0 16px rgba(37, 211, 102, 0.3);
+    }
+    .wc-audio-toggle.is-playing #wc-audio-state {
+      color: #25d366;
+    }
+
+    .wc-audio-bars {
+      display: inline-flex;
+      align-items: flex-end;
+      gap: 2.5px;
+      width: 14px;
+      height: 12px;
+    }
+    .wc-audio-bars i {
+      flex: 1;
+      background: rgba(244, 246, 240, 0.6);
+      border-radius: 1px;
+      transition: height 0.2s ease, background 0.2s ease;
+    }
+    .wc-audio-bars i:nth-child(1) { height: 4px; }
+    .wc-audio-bars i:nth-child(2) { height: 9px; }
+    .wc-audio-bars i:nth-child(3) { height: 6px; }
+    .wc-audio-bars i:nth-child(4) { height: 11px; }
+
+    .wc-audio-toggle.is-playing .wc-audio-bars i {
+      background: #25d366;
+      animation: eqBar 1.2s ease-in-out infinite alternate;
+    }
+    .wc-audio-toggle.is-playing .wc-audio-bars i:nth-child(1) { animation-duration: 0.8s; }
+    .wc-audio-toggle.is-playing .wc-audio-bars i:nth-child(2) { animation-duration: 1.1s; animation-delay: 0.15s; }
+    .wc-audio-toggle.is-playing .wc-audio-bars i:nth-child(3) { animation-duration: 0.9s; animation-delay: 0.3s; }
+    .wc-audio-toggle.is-playing .wc-audio-bars i:nth-child(4) { animation-duration: 1.3s; animation-delay: 0.1s; }
+
+    @keyframes eqBar {
+      0% { height: 3px; }
+      50% { height: 12px; }
+      100% { height: 5px; }
+    }
+
+    /* Center Frosted Glass Brand Card */
+    .wc-center-wrap {
+      position: absolute;
+      top: 50%;
+      left: 50%;
+      transform: translate(-50%, -50%);
+      z-index: 15;
+      width: min(680px, calc(100vw - 44px));
+      text-align: center;
+      pointer-events: auto;
+      transform-style: preserve-3d;
+      will-change: transform;
+      transition: transform 0.15s ease-out;
+    }
+
+    .wc-card {
+      padding: clamp(32px, 4.4vw, 48px) clamp(24px, 4vw, 44px);
+      background: rgba(8, 13, 16, 0.78);
+      backdrop-filter: blur(16px);
+      -webkit-backdrop-filter: blur(16px);
+      border: 1px solid rgba(245, 207, 37, 0.28);
+      border-radius: 20px;
+      box-shadow:
+        0 24px 64px rgba(0, 0, 0, 0.75),
+        inset 0 1px 0 rgba(245, 207, 37, 0.22);
+    }
+
+    .wc-badge-row {
+      display: inline-flex;
+      align-items: center;
+      gap: 12px;
+      padding: 6px 16px 6px 8px;
+      margin-bottom: 18px;
+      border: 1px solid rgba(245, 207, 37, 0.35);
+      border-radius: 999px;
+      background: rgba(10, 16, 19, 0.76);
+      backdrop-filter: blur(8px);
+      -webkit-backdrop-filter: blur(8px);
+    }
+
+    .wc-logo-mark {
+      display: inline-block;
+      width: 28px;
+      height: 28px;
+      border-radius: 50%;
+      background: #222 url("assets/rg-logo-reference.jpg") no-repeat 50% 40.2% / 151.2% auto;
+      border: 1px solid rgba(245, 207, 37, 0.7);
+    }
+
+    .wc-kicker {
+      margin: 0;
+      font-family: var(--mono);
+      font-size: clamp(10px, 1.1vw, 11.5px);
+      letter-spacing: 0.1em;
+      text-transform: uppercase;
+      color: var(--yellow);
+    }
+
+    .wc-title {
+      margin: 0 0 12px;
+      font-size: clamp(2.3rem, 4.8vw, 4.2rem);
+      font-weight: 600;
+      line-height: 1.02;
+      letter-spacing: -0.035em;
+      color: var(--paper);
+      text-shadow: 0 10px 30px rgba(0, 0, 0, 0.7);
+    }
+    .wc-title span {
+      color: var(--yellow);
+    }
+
+    .wc-sub {
+      margin: 0 0 24px;
+      font-size: clamp(16px, 1.35vw, 19.5px);
+      color: #cbd8d2;
+      letter-spacing: -0.01em;
+      text-shadow: 0 4px 16px rgba(0, 0, 0, 0.8);
+    }
+
+    .wc-enter-btn {
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+      gap: 10px;
+      min-width: 220px;
+      min-height: 54px;
+      padding: 0 32px;
+      font-family: var(--sans);
+      font-size: 13px;
+      font-weight: 600;
+      letter-spacing: 0.08em;
+      text-transform: uppercase;
+      color: #070b0d;
+      background: var(--yellow);
+      border: 0;
+      border-radius: 999px;
+      cursor: pointer;
+      box-shadow:
+        0 14px 36px rgba(0, 0, 0, 0.55),
+        0 0 28px rgba(245, 207, 37, 0.35);
+      transition: transform 0.18s ease, box-shadow 0.18s ease, background-color 0.18s ease;
+    }
+    .wc-enter-btn:hover {
+      transform: translateY(-2px);
+      box-shadow:
+        0 18px 42px rgba(0, 0, 0, 0.65),
+        0 0 36px rgba(245, 207, 37, 0.5);
+      background: #ffdb3d;
+    }
+
+    .wc-hint {
+      margin: 12px 0 0;
+      font-family: var(--mono);
+      font-size: 11px;
+      letter-spacing: 0.08em;
+      text-transform: uppercase;
+      color: #a4b3ac;
+    }
+
+    /* Clean Bottom Status Bar */
+    .wc-hud-bottom {
+      position: absolute;
+      bottom: clamp(20px, 3.2vw, 38px);
+      left: clamp(20px, 3.2vw, 44px);
+      right: clamp(20px, 3.2vw, 44px);
+      z-index: 12;
+      display: flex;
+      flex-wrap: wrap;
+      align-items: center;
+      justify-content: space-between;
+      gap: 12px 24px;
+      padding: 12px 20px;
+      border: 1px solid rgba(244, 246, 240, 0.12);
+      border-radius: 12px;
+      background: rgba(7, 11, 13, 0.74);
+      backdrop-filter: blur(12px);
+      -webkit-backdrop-filter: blur(12px);
+      font-family: var(--mono);
+      font-size: 11px;
+      letter-spacing: 0.08em;
+      text-transform: uppercase;
+      color: #a4b3ac;
+      pointer-events: auto;
+    }
+
+    .wc-foot-left {
+      white-space: nowrap;
+      flex-shrink: 0;
+    }
+    .wc-foot-left strong {
+      color: var(--yellow);
+      font-weight: 500;
+    }
+
+    .wc-foot-right {
+      display: flex;
+      align-items: center;
+      gap: 18px;
+      white-space: nowrap;
+      flex-shrink: 0;
+    }
+    .wc-foot-right a {
+      color: var(--paper);
+      text-decoration: none;
+      transition: color 0.15s ease;
+    }
+    .wc-foot-right a:hover {
+      color: var(--yellow);
+    }
+    .wc-foot-right a strong {
+      color: var(--yellow);
+    }
+
+    @media (max-width: 680px) {
+      .wc-badge-row {
+        padding: 5px 12px 5px 6px;
+      }
+      .wc-kicker {
+        font-size: 9.5px;
+      }
+      .wc-top-pill {
+        display: none;
+      }
+      .wc-hud-bottom {
+        flex-direction: column;
+        align-items: center;
+        text-align: center;
+        padding: 12px;
+      }
+      .wc-foot-right {
+        justify-content: center;
+      }
+    }
+
+    @media (prefers-reduced-motion: reduce) {
+      .wc-scene,
+      .wc-water-layer,
+      .wc-water-shimmer,
+      .wc-live-dot {
+        animation: none !important;
+        transform: none !important;
+      }
+      .wc-water-layer {
+        display: none !important;
+      }
+    }
+  </style>
+</head>
+<body>
+
+<!-- Real-Time Living River Water Current Displacement Filter -->
+<svg aria-hidden="true" style="position: absolute; width: 0; height: 0; pointer-events: none; overflow: hidden;">
+  <defs>
+    <filter id="wcRiverFlow" x="-20%" y="-20%" width="140%" height="140%" color-interpolation-filters="sRGB">
+      <feTurbulence type="fractalNoise" baseFrequency="0.014 0.045" numOctaves="3" seed="8" result="noise">
+        <animate attributeName="baseFrequency" dur="18s" values="0.012 0.040; 0.018 0.052; 0.012 0.040" repeatCount="indefinite" />
+      </feTurbulence>
+      <feDisplacementMap in="SourceGraphic" in2="noise" scale="11" xChannelSelector="R" yChannelSelector="G" result="displaced" />
+    </filter>
+  </defs>
+</svg>
+
+<div class="wc-container" id="wc-container">
+  <!-- Living Photographic Scene: Breathing Camera & Flowing River Current -->
+  <div class="wc-scene" id="wc-scene">
+    <!-- Base Sharp Landscape Photo (No People, No Tech Overlays) -->
+    <img
+      class="wc-bg-base"
+      src="assets/generated/cumbria-river-survey-no-man.jpg"
+      alt="Cumbrian river survey platform and valley"
+      width="1376"
+      height="768"
+    />
+
+    <!-- Real-Time Fluid River Water Displacement Layer -->
+    <img
+      class="wc-water-layer"
+      src="assets/generated/cumbria-river-survey-no-man.jpg"
+      alt=""
+      width="1376"
+      height="768"
+      aria-hidden="true"
+    />
+
+    <!-- Specular Water Ripple Shimmer -->
+    <div class="wc-water-shimmer" aria-hidden="true"></div>
+
+    <!-- Atmospheric Vignette Grading -->
+    <div class="wc-vignette" aria-hidden="true"></div>
+  </div>
+
+  <!-- Top Subtle Location Pill -->
+  <div class="wc-top-pill" aria-hidden="true">
+    <span class="wc-live-dot"></span>
+    <span>CUMBRIA · RIVER PLATFORM FIELDWORK</span>
+  </div>
+
+  <!-- Gentle Water Trickle Ambient Sound Toggle -->
+  <button type="button" class="wc-audio-toggle" id="wc-audio-btn" aria-label="Toggle gentle water trickle sound">
+    <span class="wc-audio-bars">
+      <i></i><i></i><i></i><i></i>
+    </span>
+    <span class="wc-audio-label">Water Trickle: <strong id="wc-audio-state">Off</strong></span>
+  </button>
+
+  <!-- Center Card -->
+  <div class="wc-center-wrap" id="wc-center">
+    <div class="wc-card">
+      <div class="wc-badge-row">
+        <span class="wc-logo-mark" aria-hidden="true"></span>
+        <p class="wc-kicker">Carlisle · Cumbria · Northumberland · SW Scotland</p>
+      </div>
+
+      <h1 class="wc-title">
+        RG Civil Engineering<br /><span>&amp; Surveying</span>
+      </h1>
+      <p class="wc-sub">Measured on site. Built with confidence.</p>
+
+      <button type="button" class="wc-enter-btn" id="enter-btn">
+        <span>Enter site</span>
+        <span aria-hidden="true">→</span>
+      </button>
+      <p class="wc-hint">Click anywhere or scroll to enter</p>
+    </div>
+  </div>
+
+  <!-- Clean Bottom Status Bar -->
+  <div class="wc-hud-bottom">
+    <div class="wc-foot-left">
+      <strong>ACTIVE FIELDWORK</strong> · RIPARIAN LEVEL MONITORING &amp; RIVER PLATFORMS
+    </div>
+    <div class="wc-foot-right">
+      <a href="tel:+447956996424">Call Ryan: <strong>07956 996 424</strong></a>
+      <a href="index.html#contact">Discuss project ↗</a>
+    </div>
+  </div>
+
+  <!-- Subtle Viewfinder Framing Brackets -->
+  <div class="wc-frame-bracket" aria-hidden="true">
+    <i></i><i></i><i></i><i></i>
+  </div>
+</div>
+
+<script>
+  // 3D Optical Parallax on Mouse Movement
+  const container = document.getElementById('wc-container');
+  const scene = document.getElementById('wc-scene');
+  const center = document.getElementById('wc-center');
+
+  let mouseX = 0, mouseY = 0;
+  let curX = 0, curY = 0;
+
+  window.addEventListener('mousemove', (e) => {
+    const w = window.innerWidth;
+    const h = window.innerHeight;
+    mouseX = (e.clientX - w / 2) / (w / 2);
+    mouseY = (e.clientY - h / 2) / (h / 2);
+  });
+
+  function animateParallax() {
+    curX += (mouseX - curX) * 0.06;
+    curY += (mouseY - curY) * 0.06;
+
+    if (scene) {
+      scene.style.transform = `translate3d(${curX * -12}px, ${curY * -10}px, 0)`;
+    }
+    if (center) {
+      center.style.transform = `translate(calc(-50% + ${curX * 16}px), calc(-50% + ${curY * 14}px)) rotateX(${curY * -3.5}deg) rotateY(${curX * 4}deg)`;
+    }
+
+    requestAnimationFrame(animateParallax);
+  }
+  requestAnimationFrame(animateParallax);
+
+  // Click / Enter interaction
+  const dismiss = () => {
+    stopRiverAudio(700);
+    container.style.transition = 'transform 0.65s cubic-bezier(0.23, 1, 0.32, 1), opacity 0.55s ease';
+    container.style.transform = 'translateY(-100%)';
+    container.style.opacity = '0';
+    setTimeout(() => {
+      window.location.href = 'index.html';
+    }, 600);
+  };
+
+  // Ambient River Audio Engine
+  let audioEl = null;
+  let isAudioPlaying = false;
+  const audioBtn = document.getElementById('wc-audio-btn');
+  const audioState = document.getElementById('wc-audio-state');
+
+  function initAudio() {
+    if (audioEl) return;
+    audioEl = new Audio('assets/audio/cumbria-river-ambient.wav');
+    audioEl.loop = true;
+    audioEl.volume = 0;
+  }
+
+  function playRiverAudio() {
+    initAudio();
+    audioEl.play().then(() => {
+      isAudioPlaying = true;
+      if (audioBtn) audioBtn.classList.add('is-playing');
+      if (audioState) audioState.textContent = 'On';
+      let vol = 0;
+      const fadeTimer = setInterval(() => {
+        vol += 0.04;
+        if (vol >= 0.45) {
+          vol = 0.45;
+          clearInterval(fadeTimer);
+        }
+        audioEl.volume = vol;
+      }, 80);
+    }).catch((err) => {
+      console.warn('Audio play prevented:', err);
+    });
+  }
+
+  function stopRiverAudio(fadeDuration = 600) {
+    if (!audioEl || !isAudioPlaying) return;
+    const startVol = audioEl.volume;
+    const step = startVol / (fadeDuration / 50);
+    const fadeOut = setInterval(() => {
+      if (audioEl.volume > step) {
+        audioEl.volume -= step;
+      } else {
+        audioEl.volume = 0;
+        audioEl.pause();
+        isAudioPlaying = false;
+        if (audioBtn) audioBtn.classList.remove('is-playing');
+        if (audioState) audioState.textContent = 'Off';
+        clearInterval(fadeOut);
+      }
+    }, 50);
+  }
+
+  if (audioBtn) {
+    audioBtn.addEventListener('click', (e) => {
+      e.stopPropagation(); // Never dismiss welcome when toggling sound!
+      if (isAudioPlaying) {
+        stopRiverAudio(400);
+      } else {
+        playRiverAudio();
+      }
+    });
+  }
+
+  container.addEventListener('click', (e) => {
+    if (e.target.closest('a') || e.target.closest('#wc-audio-btn')) return;
+    dismiss();
+  });
+
+  window.addEventListener('wheel', (e) => {
+    if (e.deltaY > 6) dismiss();
+  }, { passive: true });
+
+  window.addEventListener('keydown', (e) => {
+    if (e.key === 'Escape' || e.key === 'Enter' || e.key === ' ' || e.key === 'ArrowDown') {
+      dismiss();
+    }
+  });
+</script>
+
+</body>
+</html>

@@ -1,0 +1,882 @@
+<!doctype html>
+<html lang="en-GB">
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <meta name="description" content="Site engineering, topographical surveys, setting out, volumetrics, monitoring and GPR surveys across Cumbria, Northumberland and south-west Scotland. Speak directly to Ryan Johnston at RG." />
+    <meta name="robots" content="noindex, nofollow" />
+    <meta name="theme-color" content="#0d1214" />
+    <meta property="og:title" content="RG Civil Engineering &amp; Surveying | Measured on Site" />
+    <meta property="og:description" content="Site engineering, land surveys, setting out and monitoring across Cumbria, Northumberland and south-west Scotland. Speak to Ryan Johnston about your project." />
+    <meta property="og:type" content="website" />
+    <meta property="og:image" content="assets/river-works-survey.jpg" />
+    <title>RG Civil Engineering &amp; Surveying | Cumbria, Northumberland &amp; SW Scotland</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com" />
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+    <link href="https://fonts.googleapis.com/css2?family=DM+Mono:ital,wght@0,400;0,500;1,400&family=Space+Grotesk:wght@400;500;600;700&display=swap" rel="stylesheet" />
+    <link rel="stylesheet" href="styles.css?v=20261114-quiethero" />
+    <!-- Welcome screen temporarily paused so refreshes land directly on the hero; uncomment the script below and remove `hidden` on #welcome-screen to re-enable -->
+    <!--
+    <script>
+      // Show living instrument welcome screen unless visiting a subpage or direct section hash
+      if (!location.search) {
+        if (!location.hash || location.hash === "#top" || location.hash === "#coverage") {
+          document.documentElement.classList.add("has-welcome");
+        }
+      }
+    </script>
+    -->
+  </head>
+  <body>
+    <a class="skip-link" href="#main">Skip to main content</a>
+
+    <!-- Living River Displacement Filter for Welcome Screen -->
+    <svg aria-hidden="true" style="position: absolute; width: 0; height: 0; pointer-events: none; overflow: hidden;">
+      <defs>
+        <filter id="wcRiverFlow" x="-20%" y="-20%" width="140%" height="140%" color-interpolation-filters="sRGB">
+          <feTurbulence type="fractalNoise" baseFrequency="0.014 0.045" numOctaves="3" seed="8" result="noise">
+            <animate attributeName="baseFrequency" dur="18s" values="0.012 0.040; 0.018 0.052; 0.012 0.040" repeatCount="indefinite" />
+          </feTurbulence>
+          <feDisplacementMap in="SourceGraphic" in2="noise" scale="11" xChannelSelector="R" yChannelSelector="G" result="displaced" />
+        </filter>
+      </defs>
+    </svg>
+
+    <!-- Full-Viewport Welcome Screen: Photorealistic Cumbrian River Survey with Living Motion -->
+    <div class="welcome-screen" id="welcome-screen" role="dialog" aria-modal="true" aria-labelledby="welcome-title" data-welcome hidden>
+      <!-- Cinematic living background: breathing camera drift, live river flow displacement, and LiDAR laser sweep -->
+      <div class="wc-media-wrap" aria-hidden="true">
+        <div class="wc-scene" id="wc-scene">
+          <img
+            class="wc-bg-img"
+            src="assets/generated/cumbria-river-survey-hero.jpg"
+            alt=""
+            width="1376"
+            height="768"
+            loading="eager"
+            decoding="async"
+          />
+          <img
+            class="wc-water-layer"
+            src="assets/generated/cumbria-river-survey-hero.jpg"
+            alt=""
+            width="1376"
+            height="768"
+            loading="eager"
+            decoding="async"
+            aria-hidden="true"
+          />
+          <div class="wc-water-shimmer" aria-hidden="true"></div>
+          <div class="wc-bg-vignette" aria-hidden="true"></div>
+          <div class="wc-laser-sweep" aria-hidden="true"></div>
+        </div>
+      </div>
+
+      <!-- Survey Reticles & Optical Crosshairs with Individual Parallax Depth -->
+      <div class="wc-reticle wc-reticle-prism" id="reticle-prism" aria-hidden="true">
+        <div class="wc-reticle-box"><div class="wc-reticle-dot"></div></div>
+        <span class="wc-reticle-tag">STN 02 · PRISM POLE</span>
+        <span class="wc-reticle-coord">ΔH: +1.428m · DIST: 42.6m</span>
+      </div>
+
+      <div class="wc-reticle wc-reticle-weir" id="reticle-weir" aria-hidden="true">
+        <div class="wc-reticle-box"><div class="wc-reticle-dot"></div></div>
+        <span class="wc-reticle-tag">WEIR CREST BENCHMARK</span>
+        <span class="wc-reticle-coord">BM 41.832m AOD</span>
+      </div>
+
+      <div class="wc-reticle wc-reticle-ts" id="reticle-ts" aria-hidden="true">
+        <div class="wc-reticle-box"><div class="wc-reticle-dot"></div></div>
+        <span class="wc-reticle-tag">OCCUPIED · STN 01</span>
+        <span class="wc-reticle-coord">LEICA TS16 ROBOTIC</span>
+      </div>
+
+      <!-- Survey Viewfinder HUD & Live Telemetry -->
+      <div class="wc-hud" aria-hidden="true">
+        <span class="welcome-frame"><i></i><i></i><i></i><i></i></span>
+
+        <div class="wc-telemetry-tl wc-hud-card">
+          <span class="wc-hud-tag"><span class="wc-status-dot"></span> RG FIELD OPERATIONS · LIVE</span>
+          <span class="wc-hud-coord">54.8925° N, 2.9329° W · CUMBRIA</span>
+          <span class="wc-hud-ticker">RTK FIXED · 18 SATS · HDOP <span id="hdop-val">0.78</span></span>
+        </div>
+        <div class="wc-telemetry-tr wc-hud-card">
+          <span class="wc-hud-tag">STN 01 · RIPARIAN LEVEL MONITORING</span>
+          <span class="wc-hud-coord">ORDNANCE SURVEY DATUM (OSTN15)</span>
+          <span class="wc-hud-ticker">
+            E: <span id="east-val">339412.842</span> &nbsp;
+            N: <span id="north-val">555109.215</span> &nbsp;
+            Z: <span id="elev-val">41.832</span>m
+          </span>
+        </div>
+      </div>
+
+      <div class="welcome-center" id="welcome-center">
+        <div class="welcome-badge-row">
+          <span class="welcome-logo-wrap">
+            <span class="brand-logo welcome-logo" aria-hidden="true"></span>
+          </span>
+          <p class="welcome-kicker">Carlisle · Cumbria · Northumberland · SW Scotland</p>
+        </div>
+
+        <h2 class="welcome-title" id="welcome-title">
+          RG Civil Engineering<br /><span>&amp; Surveying</span>
+        </h2>
+        <p class="welcome-sub">Measured on site. Built with confidence.</p>
+
+        <div class="welcome-actions">
+          <button type="button" class="button button-signal button-lg welcome-enter-btn" data-welcome-enter>
+            <span>Enter site</span>
+            <span class="btn-icon" aria-hidden="true">→</span>
+          </button>
+          <p class="welcome-hint">Click anywhere or scroll to enter</p>
+        </div>
+      </div>
+
+      <div class="welcome-foot">
+        <span class="welcome-foot-item">
+          <strong>ACTIVE FIELDWORK</strong> · RIVER PLATFORMS &amp; SURVEY CONTROL &nbsp;|&nbsp;
+          HA: <span id="ha-val">124°18′04″</span> &nbsp; VA: <span id="va-val">88°42′10″</span>
+        </span>
+        <div class="welcome-foot-links">
+          <a href="tel:+447956996424" class="welcome-foot-phone" data-contact-link="phone" data-welcome-stop>
+            <span>Call Ryan: <strong data-config="phone">07956 996 424</strong></span>
+          </a>
+          <a href="#contact" class="welcome-foot-cta" data-welcome-jump="#contact">
+            <span>Discuss your project ↗</span>
+          </a>
+        </div>
+      </div>
+    </div>
+
+    <!-- Top floating island header -->
+    <header class="site-header">
+      <div class="shell header-inner">
+        <a class="brand" href="#top" aria-label="RG Civil Engineering and Surveying homepage">
+          <span class="brand-logo-frame">
+            <span class="brand-logo" aria-hidden="true"></span>
+          </span>
+          <span class="brand-copy">
+            <strong>RG</strong>
+            <span>Civil Engineering<br />&amp; Surveying</span>
+          </span>
+        </a>
+
+
+        <nav class="site-nav" id="site-nav" aria-label="Primary navigation">
+          <a href="#services" class="nav-link"><span>Services</span></a>
+          <a href="#process" class="nav-link"><span>Workflow</span></a>
+          <a href="#about" class="nav-link"><span>About RG</span></a>
+          <div class="nav-actions">
+            <a class="nav-phone" href="tel:+447956996424" data-contact-link="phone" aria-label="Call Ryan Johnston on 07956 996 424">
+              <span class="phone-pulse" aria-hidden="true"></span>
+              <span data-config="phone">07956 996 424</span>
+            </a>
+            <a class="button button-signal nav-cta" href="#contact">
+              <span>Discuss your project</span>
+              <span class="btn-icon" aria-hidden="true">↗</span>
+            </a>
+          </div>
+        </nav>
+
+        <button class="nav-toggle" type="button" aria-expanded="false" aria-controls="site-nav" aria-label="Open navigation">
+          <span class="toggle-bar"></span>
+          <span class="toggle-bar"></span>
+        </button>
+      </div>
+    </header>
+
+    <main id="main">
+      <!-- High-Impact Moving Hero Section -->
+      <section class="hero" id="top" aria-labelledby="hero-title">
+        <div class="hero-contours" aria-hidden="true"></div>
+        <svg class="hero-traverse" viewBox="0 0 1200 760" preserveAspectRatio="xMidYMid slice" aria-hidden="true">
+          <path
+            class="hero-traverse-line"
+            pathLength="1"
+            d="M -40 610 L 210 490 L 470 535 L 730 330 L 1060 210"
+          />
+          <g class="hero-traverse-nodes">
+            <g class="hero-stn" style="--stn-d: 0.25s" transform="translate(210, 490)">
+              <circle r="12" class="hero-stn-ring" />
+              <circle r="3.5" class="hero-stn-dot" />
+            </g>
+            <g class="hero-stn" style="--stn-d: 0.65s" transform="translate(470, 535)">
+              <circle r="12" class="hero-stn-ring" />
+              <circle r="3.5" class="hero-stn-dot" />
+            </g>
+            <g class="hero-stn" style="--stn-d: 1.05s" transform="translate(730, 330)">
+              <circle r="12" class="hero-stn-ring" />
+              <circle r="3.5" class="hero-stn-dot" />
+            </g>
+          </g>
+        </svg>
+
+        <div class="hero-copy">
+          <p class="hero-kicker hero-enter" style="--enter-d: 0ms">
+            <span class="hero-kicker-tag">Civil Engineering &amp; Surveying</span>
+            <span class="hero-kicker-loc">Carlisle · Serving the Border Regions</span>
+          </p>
+
+          <h1 class="hero-title" id="hero-title">
+            <span class="hero-title-line hero-enter" style="--enter-d: 60ms">Measured on site.</span>
+            <span class="hero-title-line hero-title-accent hero-enter" style="--enter-d: 120ms">Built with confidence.</span>
+          </h1>
+
+          <div class="hero-lede hero-enter" style="--enter-d: 180ms">
+            <p>Land and utility surveys, setting out and site engineering across Cumbria, Northumberland and South-West Scotland.</p>
+            <p>Work directly with <span data-config="contactName">Ryan Johnston</span>, from initial enquiry to project delivery.</p>
+          </div>
+
+          <div class="hero-actions hero-enter" style="--enter-d: 240ms">
+            <a class="button button-signal button-lg" href="#contact">
+              <span>Discuss your project</span>
+              <span class="btn-icon" aria-hidden="true">↗</span>
+            </a>
+            <a class="hero-call-link" href="tel:+447956996424" data-contact-link="phone">
+              <span>Call Ryan</span>
+              <span class="hero-call-sep" aria-hidden="true">·</span>
+              <span class="hero-call-num" data-config="phone">07956 996 424</span>
+            </a>
+          </div>
+        </div>
+
+        <div class="hero-visual" data-hero-reel>
+          <div class="hero-slides" aria-live="off">
+            <figure class="hero-slide is-active" data-hero-slide="0">
+              <picture>
+                <source type="image/webp" srcset="assets/site/hero-viaduct-survey-720.webp 720w, assets/site/hero-viaduct-survey-1086.webp 1086w" sizes="(max-width: 899px) 100vw, 48vw" />
+                <img
+                  src="assets/site/hero-viaduct-survey-1086.jpg"
+                  alt="Leica total station on a yellow tripod and a survey controller on a pole, set up above new concrete viaduct piers with a new road being built beyond"
+                  width="1086"
+                  height="1448"
+                  style="object-position: 55% 62%"
+                  fetchpriority="high"
+                />
+              </picture>
+              <figcaption class="hero-slide-cap"><span>Survey control above new viaduct piers</span></figcaption>
+            </figure>
+
+            <figure class="hero-slide" data-hero-slide="1">
+              <picture>
+                <source type="image/avif" srcset="assets/web/field-one-720.avif 720w, assets/web/field-one-1200.avif 1200w" sizes="(max-width: 899px) 100vw, 48vw" />
+                <source type="image/webp" srcset="assets/web/field-one-720.webp 720w, assets/web/field-one-1200.webp 1200w" sizes="(max-width: 899px) 100vw, 48vw" />
+                <img
+                  src="assets/field/rg-field-one-enhanced.jpg"
+                  alt="Total station on a tripod on a cleared earthworks site, with a survey controller in the foreground and green hills behind"
+                  width="1207"
+                  height="1303"
+                  style="object-position: 62% 38%"
+                  loading="lazy"
+                  decoding="async"
+                />
+              </picture>
+              <figcaption class="hero-slide-cap"><span>Total station set up on open ground</span></figcaption>
+            </figure>
+
+            <figure class="hero-slide" data-hero-slide="2">
+              <picture>
+                <source type="image/webp" srcset="assets/site/hero-site-formwork-pits.webp" />
+                <img
+                  src="assets/site/hero-site-formwork-pits.jpg"
+                  alt="Timber and black-faced formwork boxes set around capped starter bars in foundation excavations on a cleared site, with site fencing behind"
+                  width="1000"
+                  height="1333"
+                  style="object-position: 50% 50%"
+                  loading="lazy"
+                  decoding="async"
+                />
+              </picture>
+              <figcaption class="hero-slide-cap"><span>Foundation formwork around capped starter bars</span></figcaption>
+            </figure>
+
+            <figure class="hero-slide" data-hero-slide="3">
+              <picture>
+                <source type="image/webp" srcset="assets/site/hero-highways-slot-drain.webp" />
+                <img
+                  src="assets/site/hero-highways-slot-drain.jpg"
+                  alt="A new slot drain running beside a tall concrete barrier on a motorway, with traffic and a gantry sign in the distance"
+                  width="1000"
+                  height="1333"
+                  style="object-position: 50% 45%"
+                  loading="lazy"
+                  decoding="async"
+                />
+              </picture>
+              <figcaption class="hero-slide-cap"><span>New slot drain beside a concrete barrier</span></figcaption>
+            </figure>
+
+            <figure class="hero-slide" data-hero-slide="4">
+              <picture>
+                <source type="image/webp" srcset="assets/site/hero-land-river-tripod.webp" />
+                <img
+                  src="assets/site/hero-land-river-tripod.jpg"
+                  alt="Leica total station on a yellow tripod with a survey controller beside a river, below a concrete road bridge on piers, with autumn trees beyond"
+                  width="1000"
+                  height="1333"
+                  style="object-position: 50% 55%"
+                  loading="lazy"
+                  decoding="async"
+                />
+              </picture>
+              <figcaption class="hero-slide-cap"><span>Total station beside a river, below a road bridge</span></figcaption>
+            </figure>
+
+            <figure class="hero-slide" data-hero-slide="5">
+              <picture>
+                <source type="image/webp" srcset="assets/site/rg-controller-total-station-sunset.webp" />
+                <img
+                  src="assets/site/rg-controller-total-station-sunset.jpg"
+                  alt="A gloved hand holding a prism pole and Leica controller in front of a total station on a yellow tripod, at sunset on a foundation site"
+                  width="960"
+                  height="1280"
+                  style="object-position: 50% 58%"
+                  loading="lazy"
+                  decoding="async"
+                />
+              </picture>
+              <figcaption class="hero-slide-cap"><span>Controller, prism pole and total station at sunset</span></figcaption>
+            </figure>
+          </div>
+
+          <span class="sv-frame" aria-hidden="true"><i></i><i></i><i></i><i></i></span>
+
+          <div class="hero-reel-nav" role="tablist" aria-label="Site photography slides">
+            <button type="button" class="hero-reel-tab is-active" role="tab" aria-selected="true" aria-label="Slide 1: Survey control above new viaduct piers" data-hero-tab="0"></button>
+            <button type="button" class="hero-reel-tab" role="tab" aria-selected="false" aria-label="Slide 2: Total station set up on open ground" data-hero-tab="1"></button>
+            <button type="button" class="hero-reel-tab" role="tab" aria-selected="false" aria-label="Slide 3: Foundation formwork around capped starter bars" data-hero-tab="2"></button>
+            <button type="button" class="hero-reel-tab" role="tab" aria-selected="false" aria-label="Slide 4: New slot drain beside a concrete barrier" data-hero-tab="3"></button>
+            <button type="button" class="hero-reel-tab" role="tab" aria-selected="false" aria-label="Slide 5: Total station beside a river, below a road bridge" data-hero-tab="4"></button>
+            <button type="button" class="hero-reel-tab" role="tab" aria-selected="false" aria-label="Slide 6: Controller, prism pole and total station at sunset" data-hero-tab="5"></button>
+          </div>
+        </div>
+      </section>
+
+      <!-- Services Section: Asymmetrical Bento Grid -->
+      <section class="section section-paper" id="services" aria-labelledby="services-heading">
+        <div class="shell">
+          <h2 class="sr-only" id="services-heading">Services</h2>
+
+          <!-- The six services sit around a compass, clockwise from the top (COMPASS FIELD in styles.css, initCompassField in app.js) -->
+          <div class="compass-field compass-six" data-compass-field>
+            <a class="quad quad-n" data-umbrella="01" href="services/land-utility-surveying.html" aria-label="Service 01: Land &amp; Utility Surveying. View full scope">
+              <span class="quad-time"><b>01</b></span>
+              <h3 class="quad-title">Land &amp; Utility Surveying</h3>
+              <ul class="quad-list"><li>Topographical &amp; Land Surveying</li><li>Overhead Cable Height Surveys</li><li>Drainage, Utility Tracing &amp; GPR Surveys</li></ul>
+              <span class="quad-cta">View full scope <span aria-hidden="true">→</span></span>
+            </a>
+            <a class="quad quad-ne" data-umbrella="02" href="services/site-engineering-earthworks.html" aria-label="Service 02: Site Engineering &amp; Earthworks. View full scope">
+              <span class="quad-time"><b>02</b></span>
+              <h3 class="quad-title">Site Engineering &amp; Earthworks</h3>
+              <ul class="quad-list"><li>Site Engineering &amp; Setting Out</li><li>Earthworks &amp; Machine Control</li><li>Quality Assurance &amp; Monitoring</li></ul>
+              <span class="quad-cta">View full scope <span aria-hidden="true">→</span></span>
+            </a>
+            <a class="quad quad-se" data-umbrella="03" href="services/highways-infrastructure.html" aria-label="Service 03: Highways &amp; Infrastructure. View full scope">
+              <span class="quad-time"><b>03</b></span>
+              <h3 class="quad-title">Highways &amp; Infrastructure</h3>
+              <ul class="quad-list"><li>Road Alignments &amp; Carriageway Levels</li><li>Junctions, Roundabouts &amp; Access Roads</li><li>Highway Drainage &amp; Embankments</li></ul>
+              <span class="quad-cta">View full scope <span aria-hidden="true">→</span></span>
+            </a>
+            <a class="quad quad-s" data-umbrella="04" href="services/bridges-structural-engineering.html" aria-label="Service 04: Bridges &amp; Structural Engineering. View full scope">
+              <span class="quad-time"><b>04</b></span>
+              <h3 class="quad-title">Bridges &amp; Structural Engineering</h3>
+              <ul class="quad-list"><li>Bridge Foundations, Abutments &amp; Piers</li><li>Bearings, Decks &amp; Parapets</li><li>Dimensional Verification &amp; RC Checks</li></ul>
+              <span class="quad-cta">View full scope <span aria-hidden="true">→</span></span>
+            </a>
+            <a class="quad quad-sw" data-umbrella="05" href="services/survey-control-construction-verification.html" aria-label="Service 05: Survey Control &amp; Construction Verification. View full scope">
+              <span class="quad-time"><b>05</b></span>
+              <h3 class="quad-title">Survey Control &amp; Construction Verification</h3>
+              <ul class="quad-list"><li>Survey Control &amp; Precision Monitoring</li><li>Construction QA &amp; As-Built Surveys</li><li>Structural, Settlement &amp; Rail Monitoring</li></ul>
+              <span class="quad-cta">View full scope <span aria-hidden="true">→</span></span>
+            </a>
+            <a class="quad quad-nw" data-umbrella="06" href="services/cad-digital-survey-services.html" aria-label="Service 06: CAD &amp; Digital Survey Services. View full scope">
+              <span class="quad-time"><b>06</b></span>
+              <h3 class="quad-title">CAD &amp; Digital Survey Services</h3>
+              <ul class="quad-list"><li>2D / 3D AutoCAD, LandXML &amp; DXF</li><li>Machine Control Design Models &amp; DTMs</li><li>As-Builts, Volumes &amp; Survey Reports</li></ul>
+              <span class="quad-cta">View full scope <span aria-hidden="true">→</span></span>
+            </a>
+            <!-- Compass: decoration for mouse users. The needle follows the mouse; clicking it opens the service it points at. -->
+            <div class="cd-compass" aria-hidden="true">
+              <svg class="cd-dial" viewBox="-40 -40 480 480" xmlns="http://www.w3.org/2000/svg">
+                <circle class="cp-bezel" cx="200" cy="200" r="198"/>
+                <circle class="cp-bezel-ring" cx="200" cy="200" r="190"/>
+                <circle class="cp-face" cx="200" cy="200" r="186"/>
+                <path class="cp-tick" d="M216.0 16.7L215.3 25.7M232.0 18.8L230.4 27.7M247.6 22.3L245.3 31.0M262.9 27.1L259.9 35.6M277.8 33.2L274.0 41.4M305.5 49.3L300.4 56.6M318.3 59.0L312.5 65.9M330.1 69.9L323.7 76.3M341.0 81.7L334.1 87.5M350.7 94.5L343.4 99.6M366.8 122.2L358.6 126.0M372.9 137.1L364.4 140.1M377.7 152.4L369.0 154.7M381.2 168.0L372.3 169.6M383.3 184.0L374.3 184.7M383.3 216.0L374.3 215.3M381.2 232.0L372.3 230.4M377.7 247.6L369.0 245.3M372.9 262.9L364.4 259.9M366.8 277.8L358.6 274.0M350.7 305.5L343.4 300.4M341.0 318.3L334.1 312.5M330.1 330.1L323.7 323.7M318.3 341.0L312.5 334.1M305.5 350.7L300.4 343.4M277.8 366.8L274.0 358.6M262.9 372.9L259.9 364.4M247.6 377.7L245.3 369.0M232.0 381.2L230.4 372.3M216.0 383.3L215.3 374.3M184.0 383.3L184.7 374.3M168.0 381.2L169.6 372.3M152.4 377.7L154.7 369.0M137.1 372.9L140.1 364.4M122.2 366.8L126.0 358.6M94.5 350.7L99.6 343.4M81.7 341.0L87.5 334.1M69.9 330.1L76.3 323.7M59.0 318.3L65.9 312.5M49.3 305.5L56.6 300.4M33.2 277.8L41.4 274.0M27.1 262.9L35.6 259.9M22.3 247.6L31.0 245.3M18.8 232.0L27.7 230.4M16.7 216.0L25.7 215.3M16.7 184.0L25.7 184.7M18.8 168.0L27.7 169.6M22.3 152.4L31.0 154.7M27.1 137.1L35.6 140.1M33.2 122.2L41.4 126.0M49.3 94.5L56.6 99.6M59.0 81.7L65.9 87.5M69.9 69.9L76.3 76.3M81.7 59.0L87.5 65.9M94.5 49.3L99.6 56.6M122.2 33.2L126.0 41.4M137.1 27.1L140.1 35.6M152.4 22.3L154.7 31.0M168.0 18.8L169.6 27.7M184.0 16.7L184.7 25.7"/>
+                <path class="cp-tick-major" d="M200.0 16.0L200.0 34.0M292.0 40.7L283.0 56.2M359.3 108.0L343.8 117.0M384.0 200.0L366.0 200.0M359.3 292.0L343.8 283.0M292.0 359.3L283.0 343.8M200.0 384.0L200.0 366.0M108.0 359.3L117.0 343.8M40.7 292.0L56.2 283.0M16.0 200.0L34.0 200.0M40.7 108.0L56.2 117.0M108.0 40.7L117.0 56.2"/>
+                <text class="cp-deg" x="200" y="50" text-anchor="middle" transform="rotate(30 200 200)">030</text><text class="cp-deg" x="200" y="50" text-anchor="middle" transform="rotate(60 200 200)">060</text><text class="cp-deg" x="200" y="50" text-anchor="middle" transform="rotate(120 200 200)">120</text><text class="cp-deg" x="200" y="50" text-anchor="middle" transform="rotate(150 200 200)">150</text><text class="cp-deg" x="200" y="50" text-anchor="middle" transform="rotate(210 200 200)">210</text><text class="cp-deg" x="200" y="50" text-anchor="middle" transform="rotate(240 200 200)">240</text><text class="cp-deg" x="200" y="50" text-anchor="middle" transform="rotate(300 200 200)">300</text><text class="cp-deg" x="200" y="50" text-anchor="middle" transform="rotate(330 200 200)">330</text>
+                <circle class="cp-ring" cx="200" cy="200" r="112"/>
+                <circle class="cp-ring" cx="200" cy="200" r="58"/>
+                <path class="cp-cross" d="M200 112V142M200 258V288M112 200H142M258 200H288"/>
+                <text class="cp-card cp-card-n" x="200" y="88" text-anchor="middle">N</text><text class="cp-card" x="318" y="208" text-anchor="middle">E</text><text class="cp-card" x="200" y="328" text-anchor="middle">S</text><text class="cp-card" x="82" y="208" text-anchor="middle">W</text>
+                <g class="cd-marker" data-phase="01" transform="rotate(0 200 200)"><path class="cpm-tri" d="M192 -10H208L200 2Z"/><text class="cpm-label" x="200" y="-16" transform="rotate(-0 200 -20)">01</text></g><g class="cd-marker" data-phase="02" transform="rotate(60 200 200)"><path class="cpm-tri" d="M192 -10H208L200 2Z"/><text class="cpm-label" x="200" y="-16" transform="rotate(-60 200 -20)">02</text></g><g class="cd-marker" data-phase="03" transform="rotate(120 200 200)"><path class="cpm-tri" d="M192 -10H208L200 2Z"/><text class="cpm-label" x="200" y="-16" transform="rotate(-120 200 -20)">03</text></g><g class="cd-marker" data-phase="04" transform="rotate(180 200 200)"><path class="cpm-tri" d="M192 -10H208L200 2Z"/><text class="cpm-label" x="200" y="-16" transform="rotate(-180 200 -20)">04</text></g><g class="cd-marker" data-phase="05" transform="rotate(240 200 200)"><path class="cpm-tri" d="M192 -10H208L200 2Z"/><text class="cpm-label" x="200" y="-16" transform="rotate(-240 200 -20)">05</text></g><g class="cd-marker" data-phase="06" transform="rotate(300 200 200)"><path class="cpm-tri" d="M192 -10H208L200 2Z"/><text class="cpm-label" x="200" y="-16" transform="rotate(-300 200 -20)">06</text></g>
+                <text class="cp-svc-label" x="200" y="159" text-anchor="middle">SERVICES</text>
+                <text class="cp-brg-label" x="200" y="250" text-anchor="middle">BEARING</text><text class="cp-brg-val" x="200" y="276" text-anchor="middle" data-compass-bearing>000°</text>
+                  <g class="cd-needle" transform="rotate(0 200 200)">
+                  <path class="cp-n" d="M200 44L214 200H186Z"/>
+                  <path class="cp-n-shade" d="M200 44L200 200H186Z"/>
+                  <path class="cp-s" d="M200 356L214 200H186Z"/>
+                  <path class="cp-s-shade" d="M200 356L200 200H186Z"/>
+                  <circle class="cp-hub" cx="200" cy="200" r="15"/>
+                  <circle class="cp-hub-dot" cx="200" cy="200" r="5"/>
+                </g>
+              </svg>
+              <div class="cd-readout">
+                <span class="cd-brg">Bearing <b data-compass-bearing>000°</b></span>
+                <span class="cd-target" data-compass-target>Service 01 · Land &amp; Utility Surveying</span>
+              </div>
+            </div>
+          </div>
+
+          <!-- Each tile above opens its own page in the services/ folder. -->
+        </div>
+      </section>
+
+      <!-- Protocol / Process Section -->
+      <section class="section section-paper process-section" id="process">
+        <div class="shell process-layout">
+          <header class="wf-head" data-wf-head>
+            <div class="wf-head-main">
+              <div class="section-tag-dark">
+                <span class="tag-bullet"></span>
+                <span>SITE WORKFLOW</span>
+              </div>
+              <h2 class="wf-title">
+                <span>Brief the job.</span>
+                <em>Build with certainty.</em>
+              </h2>
+            </div>
+            <div class="wf-head-side">
+              <p class="wf-intro">Share your drawings, site location and scope — Ryan agrees clear deliverables up front and carries out the survey or setting out to suit your programme.</p>
+              <div class="wf-actions">
+                <a class="enq-btn enq-btn-primary" href="#contact">Start an enquiry</a>
+                <button type="button" class="wf-copy-link" id="copy-checklist-btn">Copy what to send</button>
+                <span class="wf-status" id="checklist-status" role="status" aria-live="polite"></span>
+              </div>
+            </div>
+          </header>
+
+          <ol class="wf-track" data-wf>
+            <li class="wf-stage">
+              <span class="wf-num" aria-hidden="true">01</span>
+              <h3>Send the brief or drawings</h3>
+              <p>Email drawings (DWG, DXF, LandXML or PDF) or simply start with a site postcode and short description of what is happening on site.</p>
+            </li>
+
+            <li class="wf-stage">
+              <span class="wf-num" aria-hidden="true">02</span>
+              <h3>Agree scope &amp; deliverables</h3>
+              <p>Setting-out pins, CAD drawings, machine models or QA checks — exact outputs, programme dates and fees are agreed before mobilisation.</p>
+            </li>
+
+            <li class="wf-stage">
+              <span class="wf-num" aria-hidden="true">03</span>
+              <h3>Surveyed, set out &amp; issued</h3>
+              <p>Fieldwork is measured cleanly on site using total station and GNSS, verified against your design and handed over in the formats your team uses.</p>
+            </li>
+          </ol>
+        </div>
+      </section>
+
+      <!-- About Section: Precision Compass Dossier -->
+      <section class="section section-mid about-section" id="about">
+        <div class="shell about-layout">
+          <!-- Compass Brandmark Display -->
+          <div class="about-instrument-pod" data-reveal>
+            <div class="compass-dial-wrap">
+              <div class="compass-outer-degrees" data-about-bezel aria-hidden="true">
+                <svg class="compass-bezel-svg" viewBox="0 0 340 340">
+                  <circle cx="170" cy="170" r="164" fill="none" stroke="rgba(245, 207, 37, 0.24)" stroke-width="1" />
+                  <g data-bezel-ticks></g>
+                  <polygon class="compass-bezel-pip" points="170,15 164.5,3 175.5,3" fill="#f5cf25" />
+                </svg>
+              </div>
+              <div class="compass-cardinal compass-n">N · 000°</div>
+              <div class="compass-cardinal compass-e">E · 090°</div>
+              <div class="compass-cardinal compass-s">S · 180°</div>
+              <div class="compass-cardinal compass-w">W · 270°</div>
+              <div class="compass-reticle-cross" aria-hidden="true"></div>
+
+              <span class="brand-logo about-logo-image" role="img" aria-label="RG Civil Engineering and Surveying compass logo"></span>
+            </div>
+            <div class="about-pod-meta" aria-hidden="true">
+              <span class="about-pod-tag">TRUE NORTH · LOCKED</span>
+              <span class="about-pod-azi">AZI <strong data-about-azi>000°</strong></span>
+            </div>
+          </div>
+
+          <!-- Direct Engineer Overview -->
+          <div class="about-copy" data-reveal data-reveal-delay="100">
+            <div class="section-tag-gold">
+              <span class="tag-bullet"></span>
+              <span>ENGINEER-LED PRACTICE</span>
+            </div>
+            <h2>Practical in the field.<br /><em>Precise where it counts.</em></h2>
+            <p>
+              <strong>RG Civil Engineering and Surveying Ltd</strong> is an independent civil engineering and surveying firm operating across Cumbria, Northumberland, south-west Scotland and surrounding areas.
+            </p>
+            <p>
+              When you engage RG, you speak directly to <strong>Ryan Johnston</strong>, Engineer / Director — covering setting out for roads, drainage, foundations, structures and temporary works alongside topographical, boundary, volumetric, GPR, overhead cable height and monitoring surveys.
+            </p>
+            
+            <div class="direct-contact-dossier">
+              <div class="dossier-pill">
+                <span class="dossier-label">DIRECTOR &amp; LEAD ENGINEER</span>
+                <strong data-config="contactName">Ryan Johnston</strong>
+                <span class="dossier-sub" data-config="contactRole">Engineer / Director</span>
+              </div>
+              <div class="dossier-chips">
+                <a class="chip-action" href="tel:+447956996424" data-contact-link="phone">
+                  <span class="chip-meta">TELEPHONE</span>
+                  <strong data-config="phone">07956 996 424</strong>
+                  <span class="chip-arrow">↗</span>
+                </a>
+                <a class="chip-action" href="mailto:ryan@rgcivilengineering.co.uk" data-contact-link="email">
+                  <span class="chip-meta">DIRECT EMAIL</span>
+                  <strong data-config="email">ryan@rgcivilengineering.co.uk</strong>
+                  <span class="chip-arrow">↗</span>
+                </a>
+              </div>
+            </div>
+          </div>
+        </div>
+      </section>
+
+      <!-- Reviews Section (13 Nov 2026, Claude): three of Ryan's four real Google reviews, word for word from his Google Business Profile, side by side.
+           The fourth ("We use Ryan on a recular basis...") is left out for now because of its typos; swap it in if preferred.
+           Google "G" logo: save the official file as assets/brand/google-g.svg and it appears automatically (hidden until then).
+           Reviewer names/dates still to add from screenshots. Update the rating/count if more reviews come in. Never invent reviews. -->
+      <section class="section section-dark reviews-section" id="reviews" aria-labelledby="reviews-title">
+        <div class="shell">
+          <div class="section-heading heading-light reviews-head" data-reveal>
+            <h2 id="reviews-title">What clients say</h2>
+            <p class="reviews-rating"><img class="google-g" src="assets/brand/google-g.svg" alt="Google" width="18" height="18" onerror="this.remove()" /><span class="review-stars" aria-hidden="true">★★★★★</span> <strong>5.0</strong> <span>from 4 reviews on Google</span></p>
+          </div>
+          <ul class="reviews-grid reviews-three" role="list">
+            <li class="review-card" data-reveal>
+              <span class="review-stars" aria-label="5 out of 5 stars">★★★★★</span>
+              <blockquote class="review-text">“Twice now for us Ryan has delivered exceptional professionalism and top-tier precision. He treats every detail as a priority and the measurements are bang on. We'll use him again on our next project guaranteed.”</blockquote>
+              <p class="review-who"><img class="google-g" src="assets/brand/google-g.svg" alt="Google" width="18" height="18" onerror="this.remove()" /><span>Google review</span></p>
+            </li>
+            <li class="review-card" data-reveal data-reveal-delay="80">
+              <span class="review-stars" aria-label="5 out of 5 stars">★★★★★</span>
+              <blockquote class="review-text">“Used Ryan and Mateusz on a recent 100x40 steel frame building. Millimeter perfection on the bolt boxes. And steel bolted up perfect. I've a few more jobs lined up for them to tackle.”</blockquote>
+              <p class="review-who"><img class="google-g" src="assets/brand/google-g.svg" alt="Google" width="18" height="18" onerror="this.remove()" /><span>Google review</span></p>
+            </li>
+            <li class="review-card" data-reveal data-reveal-delay="160">
+              <span class="review-stars" aria-label="5 out of 5 stars">★★★★★</span>
+              <blockquote class="review-text">“Ryan has completed several topo and site surveys for me. I have found him to be professional and keen to help however he can.”</blockquote>
+              <p class="review-who"><img class="google-g" src="assets/brand/google-g.svg" alt="Google" width="18" height="18" onerror="this.remove()" /><span>Lofthouse Architectural</span></p>
+            </li>
+          </ul>
+          <a class="reviews-link" href="https://www.google.com/maps/place/?q=place_id:ChIJzdSTSiMZfUgRW-ockuWV5v8" target="_blank" rel="noopener">Read all reviews on Google ↗</a>
+        </div>
+      </section>
+
+      <!-- Contact Section: Interactive Project Inquiry Console -->
+      <section class="contact-section" id="contact">
+        <div class="contact-grid" aria-hidden="true"></div>
+        <!-- Enquiry: one question at a time. The steps live here; the behaviour is initEnquiry() in app.js; the look is the "ENQUIRY (step by step)" block at the end of styles.css. Preview only: it opens the visitor's own email app, nothing is stored or sent by the site. -->
+        <div class="shell enq-layout">
+          <header class="enq-intro" data-reveal>
+            <div class="enq-intro-copy">
+              <h2>Have a site<br /><em>to get right?</em></h2>
+              <p>Answer a few short questions and your email to Ryan Johnston is written for you. Or call him directly.</p>
+            </div>
+            <div class="enq-direct">
+              <p class="enq-direct-label">Rather talk it through?</p>
+              <a class="enq-direct-phone" href="tel:+447956996424" data-contact-link="phone" data-config="phone">07956 996 424</a>
+              <a class="enq-direct-email" href="mailto:ryan@rgcivilengineering.co.uk" data-contact-link="email" data-config="email">ryan@rgcivilengineering.co.uk</a>
+              <div class="enq-direct-copy">
+                <button type="button" class="contact-copy-pill" data-copy-contact="phone">Copy phone</button>
+                <button type="button" class="contact-copy-pill" data-copy-contact="email">Copy email</button>
+                <span class="contact-copy-toast" id="contact-copy-status" role="status" aria-live="polite"></span>
+              </div>
+            </div>
+          </header>
+
+          <div class="enq" id="enquiry" data-enq data-reveal data-reveal-delay="100">
+            <div class="enq-top">
+              <p class="enq-count" data-enq-count aria-live="polite">Question 1 of 6</p>
+              <ol class="enq-rail" data-enq-rail></ol>
+            </div>
+
+            <form class="enq-form" novalidate autocomplete="on">
+              <!-- 1. What do you need -->
+              <section class="enq-step" data-step="need" aria-labelledby="enq-q-need">
+                <h3 class="enq-q" id="enq-q-need" tabindex="-1">What do you need help with?</h3>
+                <p class="enq-hint">Pick the closest. You can explain more in a moment.</p>
+                <div class="enq-compass enq-six" role="group" aria-labelledby="enq-q-need">
+                  <button type="button" class="enq-tile enq-plate enq-n" data-enq-need="01" data-bearing="0" aria-pressed="false">
+                    <span class="enq-kicker">01</span>
+                    <span class="enq-tile-title">Land &amp; Utility Surveying</span>
+                    <span class="enq-tile-desc">Topographical &amp; land surveys, overhead cables, drainage, utility tracing and GPR</span>
+                    <span class="enq-tick" aria-hidden="true"></span>
+                  </button>
+                  <button type="button" class="enq-tile enq-plate enq-ne" data-enq-need="02" data-bearing="60" aria-pressed="false">
+                    <span class="enq-kicker">02</span>
+                    <span class="enq-tile-title">Site Engineering &amp; Earthworks</span>
+                    <span class="enq-tile-desc">Setting out, steelwork bolts, earthworks, GPS machine control and QA checks</span>
+                    <span class="enq-tick" aria-hidden="true"></span>
+                  </button>
+                  <button type="button" class="enq-tile enq-plate enq-se" data-enq-need="03" data-bearing="120" aria-pressed="false">
+                    <span class="enq-kicker">03</span>
+                    <span class="enq-tile-title">Highways &amp; Infrastructure</span>
+                    <span class="enq-tile-desc">Road alignments, carriageway levels, junctions, embankments and highway QA</span>
+                    <span class="enq-tick" aria-hidden="true"></span>
+                  </button>
+                  <button type="button" class="enq-tile enq-plate enq-s" data-enq-need="04" data-bearing="180" aria-pressed="false">
+                    <span class="enq-kicker">04</span>
+                    <span class="enq-tile-title">Bridges &amp; Structural Engineering</span>
+                    <span class="enq-tile-desc">Bridge setting out, dimensional checks, deformation monitoring and RC checks</span>
+                    <span class="enq-tick" aria-hidden="true"></span>
+                  </button>
+                  <button type="button" class="enq-tile enq-plate enq-sw" data-enq-need="05" data-bearing="240" aria-pressed="false">
+                    <span class="enq-kicker">05</span>
+                    <span class="enq-tile-title">Survey Control &amp; Construction Verification</span>
+                    <span class="enq-tile-desc">Control networks, precision monitoring, QA checks and as-built drawings</span>
+                    <span class="enq-tick" aria-hidden="true"></span>
+                  </button>
+                  <button type="button" class="enq-tile enq-plate enq-nw" data-enq-need="06" data-bearing="300" aria-pressed="false">
+                    <span class="enq-kicker">06</span>
+                    <span class="enq-tile-title">CAD &amp; Digital Survey Services</span>
+                    <span class="enq-tile-desc">AutoCAD drawings, DTMs, LandXML/DXF, machine models and survey reports</span>
+                    <span class="enq-tick" aria-hidden="true"></span>
+                  </button>
+                  <div class="enq-dial" data-enq-dial aria-hidden="true">
+                    <svg viewBox="0 0 120 120" width="120" height="120" focusable="false">
+                      <circle cx="60" cy="60" r="56" class="enq-dial-ring" />
+                      <g class="enq-dial-ticks">
+                        <line x1="60" y1="8" x2="60" y2="18" /><line x1="60" y1="102" x2="60" y2="112" />
+                        <line x1="8" y1="60" x2="18" y2="60" /><line x1="102" y1="60" x2="112" y2="60" />
+                        <line x1="23.2" y1="23.2" x2="28.2" y2="28.2" /><line x1="96.8" y1="23.2" x2="91.8" y2="28.2" />
+                        <line x1="23.2" y1="96.8" x2="28.2" y2="91.8" /><line x1="96.8" y1="96.8" x2="91.8" y2="91.8" />
+                      </g>
+                      <g class="enq-needle" data-enq-needle>
+                        <polygon points="60,16 67,60 53,60" class="enq-needle-n" />
+                        <polygon points="60,104 67,60 53,60" class="enq-needle-s" />
+                        <circle cx="60" cy="60" r="5" class="enq-needle-cap" />
+                      </g>
+                    </svg>
+                  </div>
+                </div>
+                <button type="button" class="enq-tile enq-wide" data-enq-need="unsure" aria-pressed="false">
+                  <span class="enq-tile-title">Not sure yet</span>
+                  <span class="enq-tile-desc">Skip this and describe the job in your own words</span>
+                  <span class="enq-tick" aria-hidden="true"></span>
+                </button>
+              </section>
+
+              <!-- 2. Which work (options are filled in by app.js to match the service chosen) -->
+              <section class="enq-step" data-step="work" aria-labelledby="enq-q-work" hidden>
+                <h3 class="enq-q" id="enq-q-work" tabindex="-1">Which work do you need?</h3>
+                <p class="enq-hint">Pick one or more. <span data-enq-phase-name></span></p>
+                <div class="enq-options" data-enq-work role="group" aria-labelledby="enq-q-work"></div>
+              </section>
+
+              <!-- 3. Where -->
+              <section class="enq-step" data-step="where" aria-labelledby="enq-q-where" hidden>
+                <h3 class="enq-q" id="enq-q-where" tabindex="-1">Where is the site?</h3>
+                <p class="enq-hint">Pick an area, then add the nearest town if you know it.</p>
+                <div class="enq-options enq-options-4" role="group" aria-labelledby="enq-q-where">
+                  <button type="button" class="enq-tile" data-enq-area="Cumbria" aria-pressed="false"><span class="enq-tile-title">Cumbria</span><span class="enq-tick" aria-hidden="true"></span></button>
+                  <button type="button" class="enq-tile" data-enq-area="Northumberland" aria-pressed="false"><span class="enq-tile-title">Northumberland</span><span class="enq-tick" aria-hidden="true"></span></button>
+                  <button type="button" class="enq-tile" data-enq-area="South-west Scotland" aria-pressed="false"><span class="enq-tile-title">South-west Scotland</span><span class="enq-tick" aria-hidden="true"></span></button>
+                  <button type="button" class="enq-tile" data-enq-area="Somewhere else" aria-pressed="false"><span class="enq-tile-title">Somewhere else</span><span class="enq-tick" aria-hidden="true"></span></button>
+                </div>
+                <label class="enq-field">
+                  <span class="enq-label">Nearest town or postcode <span class="enq-optional">(optional)</span></span>
+                  <input type="text" name="town" autocomplete="address-level2" maxlength="120" />
+                </label>
+              </section>
+
+              <!-- 4. When -->
+              <section class="enq-step" data-step="when" aria-labelledby="enq-q-when" hidden>
+                <h3 class="enq-q" id="enq-q-when" tabindex="-1">When do you need it?</h3>
+                <p class="enq-hint">A rough idea is fine.</p>
+                <div class="enq-options enq-options-2" role="group" aria-labelledby="enq-q-when">
+                  <button type="button" class="enq-tile" data-enq-when="As soon as possible" aria-pressed="false"><span class="enq-tile-title">As soon as possible</span><span class="enq-tile-desc">Subject to Ryan's availability</span><span class="enq-tick" aria-hidden="true"></span></button>
+                  <button type="button" class="enq-tile" data-enq-when="Within the next 1 to 2 weeks" aria-pressed="false"><span class="enq-tile-title">In the next 1 to 2 weeks</span><span class="enq-tile-desc">Work is due to start soon</span><span class="enq-tick" aria-hidden="true"></span></button>
+                  <button type="button" class="enq-tile" data-enq-when="Planning or tender stage" aria-pressed="false"><span class="enq-tile-title">Planning or tender stage</span><span class="enq-tile-desc">No date fixed yet</span><span class="enq-tick" aria-hidden="true"></span></button>
+                  <button type="button" class="enq-tile" data-enq-when="Not sure yet" aria-pressed="false"><span class="enq-tile-title">Not sure yet</span><span class="enq-tile-desc">Talk it through with Ryan</span><span class="enq-tick" aria-hidden="true"></span></button>
+                </div>
+              </section>
+
+              <!-- 5. Notes -->
+              <section class="enq-step" data-step="notes" aria-labelledby="enq-q-notes" hidden>
+                <h3 class="enq-q" id="enq-q-notes" tabindex="-1">Anything Ryan should know?</h3>
+                <p class="enq-hint">Optional. A sentence or two is plenty: what stage the job is at, what drawings you have, any access limits.</p>
+                <label class="enq-field">
+                  <span class="enq-label">About the job <span class="enq-optional">(optional)</span></span>
+                  <textarea name="notes" rows="5" maxlength="2000"></textarea>
+                </label>
+                <p class="enq-aside">Have drawings? You can attach them to the email on the last step.</p>
+                <details class="enq-details">
+                  <summary>Which drawings and files help?</summary>
+                  <ul>
+                    <li><strong>Control and coordinates:</strong> site boundary details, control coordinates and any existing survey control already on site.</li>
+                    <li><strong>Drawings and data:</strong> 2D and 3D AutoCAD drawings, LandXML or DXF files, coordinate schedules, or site plans.</li>
+                    <li><strong>3D modelling and machine control:</strong> digital terrain models, surface models and machine control design models.</li>
+                  </ul>
+                </details>
+              </section>
+
+              <!-- 6. Your details -->
+              <section class="enq-step" data-step="you" aria-labelledby="enq-q-you" hidden>
+                <h3 class="enq-q" id="enq-q-you" tabindex="-1">How should Ryan reach you?</h3>
+                <p class="enq-hint">Your name and one way to contact you.</p>
+                <div class="enq-fields-2">
+                  <label class="enq-field">
+                    <span class="enq-label">Your name</span>
+                    <input type="text" name="name" autocomplete="name" maxlength="120" aria-describedby="enq-err-name" />
+                    <span class="enq-error" id="enq-err-name" data-enq-error="name" hidden></span>
+                  </label>
+                  <label class="enq-field">
+                    <span class="enq-label">Phone number or email</span>
+                    <input type="text" name="contact" inputmode="email" autocomplete="email" maxlength="160" aria-describedby="enq-err-contact" />
+                    <span class="enq-error" id="enq-err-contact" data-enq-error="contact" hidden></span>
+                  </label>
+                </div>
+                <label class="enq-field">
+                  <span class="enq-label">Company or contractor <span class="enq-optional">(optional)</span></span>
+                  <input type="text" name="company" autocomplete="organization" maxlength="160" />
+                </label>
+              </section>
+
+              <!-- 7. Check and send -->
+              <section class="enq-step" data-step="review" aria-labelledby="enq-q-review" hidden>
+                <h3 class="enq-q" id="enq-q-review" tabindex="-1">Check it, then send</h3>
+                <p class="enq-hint">This opens your own email app with everything filled in. Nothing is sent until you press send there.</p>
+                <dl class="enq-summary" data-enq-summary></dl>
+                <div class="enq-send">
+                  <a class="enq-btn enq-btn-primary enq-btn-xl" data-enq-mail href="mailto:ryan@rgcivilengineering.co.uk">Open email to Ryan</a>
+                  <button type="button" class="enq-btn enq-btn-ghost" data-enq-copy>Copy the enquiry text</button>
+                  <button type="button" class="enq-btn enq-btn-ghost enq-back-inline" data-enq-back-inline>Back</button>
+                </div>
+                <p class="enq-status" data-enq-send-status role="status" aria-live="polite"></p>
+                <details class="enq-details">
+                  <summary>See the email before it opens</summary>
+                  <pre class="enq-preview" data-enq-preview tabindex="0"></pre>
+                </details>
+                <p class="enq-aside">Or call Ryan on <a href="tel:+447956996424" data-contact-link="phone" data-config="phone">07956 996 424</a>, or email <a href="mailto:ryan@rgcivilengineering.co.uk" data-contact-link="email" data-config="email">ryan@rgcivilengineering.co.uk</a>.</p>
+              </section>
+            </form>
+
+            <p class="enq-step-error" data-enq-step-error role="alert" hidden></p>
+
+            <div class="enq-nav">
+              <button type="button" class="enq-btn enq-btn-ghost" data-enq-back hidden>Back</button>
+              <button type="button" class="enq-btn enq-btn-primary" data-enq-next>Continue</button>
+            </div>
+
+            <p class="enq-foot">
+              <span>Preview: this form stores nothing on a server. Your answers stay on this device until you send the email.</span>
+              <button type="button" class="enq-restart" data-enq-restart hidden>Start again</button>
+            </p>
+            <noscript><p class="enq-foot">This form needs JavaScript. Please call 07956 996 424 or email ryan@rgcivilengineering.co.uk instead.</p></noscript>
+          </div>
+        </div>
+      </section>
+    </main>
+
+    <!-- Site Footer -->
+    <footer class="site-footer">
+      <div class="shell footer-grid">
+        <div class="footer-brand-col">
+          <div class="footer-brand">
+            <span class="brand-logo" aria-hidden="true"></span>
+            <div>
+              <strong>RG Civil Engineering</strong>
+              <p>&amp; Surveying Ltd</p>
+            </div>
+          </div>
+          <p class="footer-blurb">
+            Practical site engineering, land surveys and high-accuracy setting out across Cumbria, Northumberland, south-west Scotland and beyond.
+          </p>
+        </div>
+
+        <div>
+          <span class="footer-label">Operational Territory</span>
+          <p>
+            Cumbria<br />
+            Northumberland<br />
+            South-West Scotland<br />
+            &amp; Surrounding Regions
+          </p>
+        </div>
+
+        <div>
+          <span class="footer-label">Project Dispatches</span>
+          <a class="footer-ext-link" href="https://www.instagram.com/rgcivilengineeringsurveying/" target="_blank" rel="noreferrer">
+            <span>RG on Instagram</span>
+            <span aria-hidden="true">↗</span>
+          </a>
+          <p class="footer-muted">Active site photography &amp; surveying field notes</p>
+        </div>
+
+        <div class="footer-contact-col">
+          <span class="footer-label">Direct Director Contact</span>
+          <p class="footer-director-name" data-config="contactName">Ryan Johnston</p>
+          <a class="footer-link-phone" href="tel:+447956996424" data-contact-link="phone" data-config="phone">07956 996 424</a>
+          <a class="footer-link-email" href="mailto:ryan@rgcivilengineering.co.uk" data-contact-link="email" data-config="email">ryan@rgcivilengineering.co.uk</a>
+        </div>
+      </div>
+
+      <!-- Keyboard Shortcuts Quick Bar (Feature 5) -->
+      <div class="shell footer-shortcuts-bar" aria-label="Keyboard navigation shortcuts">
+        <span class="shortcuts-title">SYSTEM SHORTCUTS:</span>
+        <span class="shortcut-pill"><kbd>/</kbd> Capability Search</span>
+        <span class="shortcut-pill"><kbd>C</kbd> Project Console</span>
+        <span class="shortcut-pill"><kbd>R</kbd> Readiness Audit</span>
+        <span class="shortcut-pill"><kbd>Esc</kbd> Close View</span>
+      </div>
+
+      <div class="shell footer-bottom">
+        <span>&copy; <span id="year"></span> RG Civil Engineering and Surveying Ltd. All rights reserved.</span>
+        <span>Registered in England &amp; Wales, company no. 15923449. Registered office: 67 Moorhouse Road, Carlisle, CA2 7LU.</span>
+      </div>
+    </footer>
+
+    <!-- Fixed Mobile Contact Bar -->
+    <nav class="mobile-cta" aria-label="Quick contact">
+      <a class="mobile-call-btn" href="tel:+447956996424" data-contact-link="phone">
+        <span class="btn-pulse" aria-hidden="true"></span>
+        <span>Call Ryan</span>
+        <span class="btn-icon" aria-hidden="true">↗</span>
+      </a>
+      <a class="mobile-quote-btn" href="#contact">
+        <span>Discuss project</span>
+        <span class="btn-icon" aria-hidden="true">↗</span>
+      </a>
+    </nav>
+
+    <!-- Upgraded High-Resolution Lightbox Modal -->
+    <div class="lightbox" role="dialog" aria-modal="true" aria-label="Field work gallery showcase" hidden>
+      <div class="lightbox-backdrop"></div>
+      <div class="lightbox-dialog">
+        <button class="lightbox-close" type="button" aria-label="Close image showcase">✕</button>
+        <button class="lightbox-nav lightbox-prev" type="button" aria-label="Previous photograph">‹</button>
+        <button class="lightbox-nav lightbox-next" type="button" aria-label="Next photograph">›</button>
+        
+        <div class="lightbox-media-wrap">
+          <img class="lightbox-img" src="" alt="Field work survey preview" />
+          <div class="lightbox-crosshair" aria-hidden="true">
+            <span></span>
+            <span></span>
+            <div class="lightbox-reticle-center"></div>
+          </div>
+        </div>
+        
+        <div class="lightbox-footer">
+          <div class="lightbox-meta">
+            <span class="lightbox-badge">FIELD TELEMETRY</span>
+            <p class="lightbox-title"></p>
+          </div>
+          <span class="lightbox-counter">[01 / 03]</span>
+        </div>
+      </div>
+    </div>
+
+    <script src="app.js?v=20261114-quiethero"></script>
+  </body>
+</html>
