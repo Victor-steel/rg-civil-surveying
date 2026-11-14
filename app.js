@@ -1333,29 +1333,8 @@ const initBriefPrinterAndShortcuts = () => {
     window.print();
   });
 
-  document.addEventListener("keydown", (e) => {
-    const tag = document.activeElement?.tagName.toLowerCase();
-    if (tag === "input" || tag === "textarea" || tag === "select") return;
-    // Leave browser shortcuts alone (Copy, Reload and so on)
-    if (e.ctrlKey || e.metaKey || e.altKey) return;
-
-    if (e.key === "/") {
-      e.preventDefault();
-      const search = document.getElementById("scope-search");
-      if (search) {
-        search.scrollIntoView({ behavior: "smooth", block: "center" });
-        search.focus();
-      }
-    } else if (e.key === "c" || e.key === "C") {
-      e.preventDefault();
-      const contact = document.getElementById("contact");
-      contact?.scrollIntoView({ behavior: "smooth" });
-    } else if (e.key === "r" || e.key === "R") {
-      e.preventDefault();
-      const process = document.getElementById("process");
-      process?.scrollIntoView({ behavior: "smooth" });
-    }
-  });
+  // Single-key shortcuts (/, C, R) removed 14 Nov 2026: they hijacked ordinary key presses for keyboard
+  // and screen-reader users, and the footer bar advertising them has gone.
 };
 
 
@@ -1576,14 +1555,30 @@ const initCompassField = () => {
         requestAnimationFrame(tickGlide);
       };
 
-      // Observe the compass dial itself so the sequence only begins once the yellow needle is visibly on screen
+      // Observe the compass dial itself so the sequence only begins once the yellow needle is visibly on screen.
+      // Fix 14 Nov 2026 (Claude): on phones the dial never reached 72% visible, so the six services stayed
+      // invisible. Now starts at 40% visible, and as a safety net also starts once the services area itself
+      // is on screen, so the panels can never stay hidden.
+      let sweepStarted = false;
+      const startSweepOnce = () => {
+        if (sweepStarted) return;
+        sweepStarted = true;
+        runCalibrationSweep();
+      };
       new IntersectionObserver((entries, observer) => {
         entries.forEach((entry) => {
           if (!entry.isIntersecting) return;
-          runCalibrationSweep();
+          startSweepOnce();
           observer.disconnect();
         });
-      }, { threshold: 0.72 }).observe(dial);
+      }, { threshold: 0.4 }).observe(dial);
+      new IntersectionObserver((entries, observer) => {
+        entries.forEach((entry) => {
+          if (!entry.isIntersecting) return;
+          window.setTimeout(startSweepOnce, 600);
+          observer.disconnect();
+        });
+      }, { threshold: 0.05 }).observe(field);
     }
 
     // Smaller screens: point at the phase in the middle of the screen as you scroll
@@ -1686,6 +1681,71 @@ const initReviewCarousel = () => {
 
   show(0);
   start();
+};
+
+// ==========================================================================
+// Recent work photo slideshows (14 Nov 2026): dots, swipe, changes every 5s;
+// pauses on hover/focus; no auto-play with reduced motion.
+// ==========================================================================
+const initProjectReels = () => {
+  const reduce = window.matchMedia("(prefers-reduced-motion: reduce)").matches;
+  document.querySelectorAll("[data-project-reel]").forEach((reel) => {
+    const slides = Array.from(reel.querySelectorAll(".project-slide"));
+    if (slides.length < 2) return;
+    const dots = document.createElement("div");
+    dots.className = "project-dots";
+    dots.setAttribute("role", "group");
+    dots.setAttribute("aria-label", "Choose a photo");
+    let current = 0;
+    let timer = null;
+    let paused = false;
+    const buttons = slides.map((_, i) => {
+      const b = document.createElement("button");
+      b.type = "button";
+      b.className = "project-dot";
+      b.setAttribute("aria-label", `Show photo ${i + 1} of ${slides.length}`);
+      b.addEventListener("click", () => { show(i); start(); });
+      dots.appendChild(b);
+      return b;
+    });
+    reel.appendChild(dots);
+    const show = (i) => {
+      current = (i + slides.length) % slides.length;
+      slides.forEach((s, n) => {
+        s.classList.toggle("is-active", n === current);
+        if (n === current) s.removeAttribute("aria-hidden");
+        else s.setAttribute("aria-hidden", "true");
+      });
+      buttons.forEach((b, n) => (n === current ? b.setAttribute("aria-current", "true") : b.removeAttribute("aria-current")));
+      const next = slides[(current + 1) % slides.length]?.querySelector("img");
+      if (next && next.loading === "lazy") next.loading = "eager";
+    };
+    const stop = () => { if (timer) { clearInterval(timer); timer = null; } };
+    const start = () => {
+      stop();
+      if (reduce || paused || document.hidden) return;
+      timer = setInterval(() => show(current + 1), 5000);
+    };
+    let touchX = null;
+    reel.addEventListener("touchstart", (e) => { touchX = e.touches[0].clientX; }, { passive: true });
+    reel.addEventListener("touchend", (e) => {
+      if (touchX === null) return;
+      const dx = e.changedTouches[0].clientX - touchX;
+      touchX = null;
+      if (Math.abs(dx) > 40) { show(current + (dx < 0 ? 1 : -1)); start(); }
+    }, { passive: true });
+    reel.addEventListener("mouseenter", () => { paused = true; stop(); });
+    reel.addEventListener("mouseleave", () => { paused = false; start(); });
+    reel.addEventListener("focusin", () => { paused = true; stop(); });
+    reel.addEventListener("focusout", (e) => { if (!reel.contains(e.relatedTarget)) { paused = false; start(); } });
+    document.addEventListener("visibilitychange", () => (document.hidden ? stop() : start()));
+    if ("IntersectionObserver" in window) {
+      new IntersectionObserver((entries, obs) => {
+        entries.forEach((en) => { if (en.isIntersecting) { start(); obs.disconnect(); } });
+      }, { threshold: 0.3 }).observe(reel);
+    } else { start(); }
+    show(0);
+  });
 };
 
 const initHeroReel = () => {
@@ -2280,6 +2340,7 @@ if (document.readyState === "loading") {
     initHeroReticle();
     initHeroReel();
     initReviewCarousel();
+    initProjectReels();
     initMobilisationRadar();
     initServicePage();
     initServiceReel();
@@ -2300,6 +2361,7 @@ if (document.readyState === "loading") {
   initHeroReticle();
   initHeroReel();
   initReviewCarousel();
+  initProjectReels();
   initMobilisationRadar();
   initServicePage();
   initServiceReel();
