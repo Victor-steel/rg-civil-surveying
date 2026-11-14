@@ -8266,3 +8266,68 @@ html.has-welcome .welcome-screen.is-leaving {
   .hero-reel-tab { min-width: 28px; min-height: 28px; }
   .quad-cta, .skip-link { font-size: 12px; }
 }
+
+/* ==========================================================================
+   PHONE SERVICES & ABOUT COMPASS CLEANUP (14 Nov 2026)
+   - Mobile: prominent "Services" section title with a compact decorative mini-compass
+   - Mobile: hide large dial in #services and large dial in #about
+   - Desktop: unchanged (full interactive compass dial in #services, precision bezel in #about)
+   ========================================================================== */
+.services-header-mobile {
+  display: none;
+}
+
+@media (max-width: 1099px) {
+  .services-header-mobile {
+    display: flex;
+    align-items: center;
+    gap: 16px;
+    margin-bottom: 24px;
+    padding: 0 4px;
+  }
+  .services-mini-compass {
+    width: 48px;
+    height: 48px;
+    flex-shrink: 0;
+    filter: drop-shadow(0 4px 12px rgba(0, 0, 0, 0.45));
+  }
+  .services-title-wrap {
+    display: flex;
+    flex-direction: column;
+    gap: 2px;
+  }
+  .services-kicker {
+    font-family: var(--mono);
+    font-size: 11px;
+    font-weight: 500;
+    letter-spacing: 0.12em;
+    color: var(--yellow);
+    text-transform: uppercase;
+  }
+  .services-title {
+    margin: 0;
+    font-size: clamp(2rem, 7vw, 2.6rem);
+    font-weight: 700;
+    letter-spacing: -0.03em;
+    color: var(--paper);
+    line-height: 1.1;
+  }
+
+  /* Hide the large interactive compass dial in #services on mobile */
+  .compass-field .cd-compass {
+    display: none !important;
+  }
+  .compass-field {
+    margin-top: 0 !important;
+  }
+
+  /* Hide the large upright compass brandmark/pod in #about on mobile */
+  #about .about-instrument-pod {
+    display: none !important;
+  }
+  #about .about-layout {
+    grid-template-columns: 1fr !important;
+    gap: 0 !important;
+  }
+}
+

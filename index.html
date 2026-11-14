@@ -14,7 +14,7 @@
     <link rel="preconnect" href="https://fonts.googleapis.com" />
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
     <link href="https://fonts.googleapis.com/css2?family=DM+Mono:ital,wght@0,400;0,500;1,400&family=Space+Grotesk:wght@400;500;600;700&display=swap" rel="stylesheet" />
-    <link rel="stylesheet" href="styles.css?v=20261114-servicesphone" />
+    <link rel="stylesheet" href="styles.css?v=20261114-mobilecompass" />
     <!-- Welcome screen temporarily paused so refreshes land directly on the hero; uncomment the script below and remove `hidden` on #welcome-screen to re-enable -->
     <!--
     <script>
@@ -329,7 +329,29 @@
       <!-- Services Section: Asymmetrical Bento Grid -->
       <section class="section section-paper" id="services" aria-labelledby="services-heading">
         <div class="shell">
-          <h2 class="sr-only" id="services-heading">Services</h2>
+          <div class="services-header-mobile">
+            <svg class="services-mini-compass" viewBox="0 0 100 100" aria-hidden="true">
+              <circle cx="50" cy="50" r="46" fill="#141c20" stroke="rgba(245, 207, 37, 0.55)" stroke-width="2"/>
+              <circle cx="50" cy="50" r="42" fill="none" stroke="rgba(244, 246, 240, 0.15)" stroke-width="1"/>
+              <!-- Crosshairs -->
+              <line x1="50" y1="12" x2="50" y2="88" stroke="rgba(244, 246, 240, 0.25)" stroke-width="1"/>
+              <line x1="12" y1="50" x2="88" y2="50" stroke="rgba(244, 246, 240, 0.25)" stroke-width="1"/>
+              <!-- Cardinals -->
+              <text x="50" y="24" fill="#f5cf25" font-family="monospace" font-size="9" font-weight="700" text-anchor="middle">N</text>
+              <text x="82" y="53" fill="rgba(244, 246, 240, 0.6)" font-family="monospace" font-size="8" text-anchor="middle">E</text>
+              <text x="50" y="83" fill="rgba(244, 246, 240, 0.6)" font-family="monospace" font-size="8" text-anchor="middle">S</text>
+              <text x="18" y="53" fill="rgba(244, 246, 240, 0.6)" font-family="monospace" font-size="8" text-anchor="middle">W</text>
+              <!-- Needles -->
+              <polygon points="50,22 54.5,50 45.5,50" fill="#f5cf25"/>
+              <polygon points="50,78 54.5,50 45.5,50" fill="#d5ddd8"/>
+              <!-- Hub -->
+              <circle cx="50" cy="50" r="4.5" fill="#0c1012" stroke="#f5cf25" stroke-width="1.5"/>
+            </svg>
+            <div class="services-title-wrap">
+              <span class="services-kicker">ENGINEERING CAPABILITIES</span>
+              <h2 class="services-title" id="services-heading">Services</h2>
+            </div>
+          </div>
 
           <!-- The six services sit around a compass, clockwise from the top (COMPASS FIELD in styles.css, initCompassField in app.js) -->
           <!-- WEDGE STYLE SWITCH (14 Nov 2026): "wedges-v2" = the calmer, easier-to-scan wedges.
