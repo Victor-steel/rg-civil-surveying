@@ -15,137 +15,95 @@
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
     <link href="https://fonts.googleapis.com/css2?family=DM+Mono:ital,wght@0,400;0,500;1,400&family=Space+Grotesk:wght@400;500;600;700&display=swap" rel="stylesheet" />
     <link rel="stylesheet" href="styles.css?v=20261114-whatsapp" />
-    <!-- Welcome screen temporarily paused so refreshes land directly on the hero; uncomment the script below and remove `hidden` on #welcome-screen to re-enable -->
-    <!--
+    <!-- Welcome screen: Living 3D Compass & 4K Cinema Welcome Entrance -->
     <script>
-      // Show living instrument welcome screen unless visiting a subpage or direct section hash
+      // Show living welcome screen on every fresh visit and refresh
       if (!location.search) {
         if (!location.hash || location.hash === "#top" || location.hash === "#coverage") {
           document.documentElement.classList.add("has-welcome");
         }
       }
     </script>
-    -->
   </head>
   <body>
     <a class="skip-link" href="#main">Skip to main content</a>
 
-    <!-- Living River Displacement Filter for Welcome Screen -->
-    <svg aria-hidden="true" style="position: absolute; width: 0; height: 0; pointer-events: none; overflow: hidden;">
-      <defs>
-        <filter id="wcRiverFlow" x="-20%" y="-20%" width="140%" height="140%" color-interpolation-filters="sRGB">
-          <feTurbulence type="fractalNoise" baseFrequency="0.014 0.045" numOctaves="3" seed="8" result="noise">
-            <animate attributeName="baseFrequency" dur="18s" values="0.012 0.040; 0.018 0.052; 0.012 0.040" repeatCount="indefinite" />
-          </feTurbulence>
-          <feDisplacementMap in="SourceGraphic" in2="noise" scale="11" xChannelSelector="R" yChannelSelector="G" result="displaced" />
-        </filter>
-      </defs>
-    </svg>
-
-    <!-- Full-Viewport Welcome Screen: Photorealistic Cumbrian River Survey with Living Motion -->
-    <div class="welcome-screen" id="welcome-screen" role="dialog" aria-modal="true" aria-labelledby="welcome-title" data-welcome hidden>
-      <!-- Cinematic living background: breathing camera drift, live river flow displacement, and LiDAR laser sweep -->
-      <div class="wc-media-wrap" aria-hidden="true">
-        <div class="wc-scene" id="wc-scene">
+    <!-- Full-Viewport Welcome Screen: 4K Cumbrian River Survey with Living 3D RG Compass -->
+    <div class="welcome-screen cinema-welcome-stage" id="welcome-screen" role="dialog" aria-modal="true" aria-labelledby="welcome-heading" data-welcome>
+      <!-- Looping Landscape Video Background with Poster & Image Fallback -->
+      <div class="cinema-stage" id="cinemaStage" aria-hidden="true">
+        <video
+          class="cinema-media"
+          autoplay
+          muted
+          loop
+          playsinline
+          poster="assets/video/cumbria-river-survey-4k-poster.jpg"
+          id="bgVideo"
+        >
+          <source src="assets/video/cumbria-river-survey-4k.mp4" type="video/mp4" />
           <img
-            class="wc-bg-img"
-            src="assets/generated/cumbria-river-survey-no-man.jpg"
-            alt=""
-            width="1376"
-            height="768"
-            loading="eager"
-            decoding="async"
+            class="cinema-media"
+            src="assets/video/cumbria-river-survey-4k-poster.jpg"
+            alt="RG Civil Engineering and Surveying Cumbrian River Survey"
           />
-          <img
-            class="wc-water-layer"
-            src="assets/generated/cumbria-river-survey-no-man.jpg"
-            alt=""
-            width="1376"
-            height="768"
-            loading="eager"
-            decoding="async"
-            aria-hidden="true"
-          />
-          <div class="wc-water-shimmer" aria-hidden="true"></div>
-          <div class="wc-bg-vignette" aria-hidden="true"></div>
-          <div class="wc-laser-sweep" aria-hidden="true"></div>
-        </div>
+        </video>
       </div>
 
-      <!-- Survey Reticles & Optical Crosshairs with Individual Parallax Depth -->
-      <div class="wc-reticle wc-reticle-prism" id="reticle-prism" aria-hidden="true">
-        <div class="wc-reticle-box"><div class="wc-reticle-dot"></div></div>
-        <span class="wc-reticle-tag">STN 02 · PRISM POLE</span>
-        <span class="wc-reticle-coord">ΔH: +1.428m · DIST: 42.6m</span>
-      </div>
+      <!-- Subtle Dark Gradient Behind Central Composition -->
+      <div class="cinema-backdrop" aria-hidden="true"></div>
 
-      <div class="wc-reticle wc-reticle-weir" id="reticle-weir" aria-hidden="true">
-        <div class="wc-reticle-box"><div class="wc-reticle-dot"></div></div>
-        <span class="wc-reticle-tag">WEIR CREST BENCHMARK</span>
-        <span class="wc-reticle-coord">BM 41.832m AOD</span>
-      </div>
+      <!-- Central Focal Composition -->
+      <div class="cinema-center" id="welcomeCenter">
+        <!-- 1. The Existing RG Logo Compass — Pure Transparent Cutout with 3D Depth -->
+        <div class="compass-emblem-stage" id="compassStage">
+          <!-- Precision Bearing Calibration Ring (Reveals during Enter transition) -->
+          <svg class="compass-transition-ring" viewBox="0 0 240 240" aria-hidden="true">
+            <circle cx="120" cy="120" r="108" fill="none" stroke="rgba(245, 207, 37, 0.42)" stroke-width="1" stroke-dasharray="4 6" />
+            <circle cx="120" cy="120" r="115" fill="none" stroke="rgba(245, 207, 37, 0.22)" stroke-width="0.75" />
+            <line x1="120" y1="2" x2="120" y2="14" stroke="#f5cf25" stroke-width="1.5" />
+            <line x1="120" y1="226" x2="120" y2="238" stroke="#f5cf25" stroke-width="1.5" />
+            <line x1="2" y1="120" x2="14" y2="120" stroke="#f5cf25" stroke-width="1.5" />
+            <line x1="226" y1="120" x2="238" y2="120" stroke="#f5cf25" stroke-width="1.5" />
+          </svg>
 
-      <div class="wc-reticle wc-reticle-ts" id="reticle-ts" aria-hidden="true">
-        <div class="wc-reticle-box"><div class="wc-reticle-dot"></div></div>
-        <span class="wc-reticle-tag">OCCUPIED · STN 01</span>
-        <span class="wc-reticle-coord">LEICA TS16 ROBOTIC</span>
-      </div>
-
-      <!-- Survey Viewfinder HUD & Live Telemetry -->
-      <div class="wc-hud" aria-hidden="true">
-        <span class="welcome-frame"><i></i><i></i><i></i><i></i></span>
-
-        <div class="wc-telemetry-tl wc-hud-card">
-          <span class="wc-hud-tag"><span class="wc-status-dot"></span> RG FIELD OPERATIONS · LIVE</span>
-          <span class="wc-hud-coord">54.8925° N, 2.9329° W · CUMBRIA</span>
-          <span class="wc-hud-ticker">RTK FIXED · 18 SATS · HDOP <span id="hdop-val">0.78</span></span>
-        </div>
-        <div class="wc-telemetry-tr wc-hud-card">
-          <span class="wc-hud-tag">STN 01 · RIPARIAN LEVEL MONITORING</span>
-          <span class="wc-hud-coord">ORDNANCE SURVEY DATUM (OSTN15)</span>
-          <span class="wc-hud-ticker">
-            E: <span id="east-val">339412.842</span> &nbsp;
-            N: <span id="north-val">555109.215</span> &nbsp;
-            Z: <span id="elev-val">41.832</span>m
-          </span>
-        </div>
-      </div>
-
-      <div class="welcome-center" id="welcome-center">
-        <div class="welcome-badge-row">
-          <span class="welcome-logo-wrap">
-            <span class="brand-logo welcome-logo" aria-hidden="true"></span>
-          </span>
-          <p class="welcome-kicker">Carlisle · Cumbria · Northumberland · SW Scotland</p>
+          <div class="compass-medallion-3d" id="compassMedallion">
+            <img
+              class="compass-base-img"
+              src="assets/brand/rg-logo-compass-cutout-3d.png"
+              alt="RG Civil Engineering and Surveying compass logo"
+              width="400"
+              height="400"
+              decoding="async"
+            />
+            <img
+              class="compass-relief-img"
+              src="assets/brand/rg-logo-compass-cutout-front.png"
+              alt=""
+              aria-hidden="true"
+              width="400"
+              height="400"
+              decoding="async"
+            />
+          </div>
         </div>
 
-        <h2 class="welcome-title" id="welcome-title">
-          RG Civil Engineering<br /><span>&amp; Surveying</span>
-        </h2>
-        <p class="welcome-sub">Measured on site. Built with confidence.</p>
+        <!-- 2. Company Name -->
+        <h1 class="welcome-heading" id="welcome-heading">
+          RG Civil Engineering
+          <span>&amp; Surveying</span>
+        </h1>
 
-        <div class="welcome-actions">
-          <button type="button" class="button button-signal button-lg welcome-enter-btn" data-welcome-enter>
-            <span>Enter site</span>
-            <span class="btn-icon" aria-hidden="true">→</span>
-          </button>
-          <p class="welcome-hint">Click anywhere or scroll to enter</p>
-        </div>
-      </div>
+        <!-- 3. Tagline -->
+        <p class="welcome-tagline">
+          Measured on site. Built with confidence.
+        </p>
 
-      <div class="welcome-foot">
-        <span class="welcome-foot-item">
-          <strong>ACTIVE FIELDWORK</strong> · RIVER PLATFORMS &amp; SURVEY CONTROL &nbsp;|&nbsp;
-          HA: <span id="ha-val">124°18′04″</span> &nbsp; VA: <span id="va-val">88°42′10″</span>
-        </span>
-        <div class="welcome-foot-links">
-          <a href="tel:+447956996424" class="welcome-foot-phone" data-contact-link="phone" data-welcome-stop>
-            <span>Call Ryan: <strong data-config="phone">07956 996 424</strong></span>
-          </a>
-          <a href="#contact" class="welcome-foot-cta" data-welcome-jump="#contact">
-            <span>Discuss your project ↗</span>
-          </a>
-        </div>
+        <!-- 4. Entry Button -->
+        <button type="button" class="enter-site-btn" id="enterSiteBtn" data-welcome-enter>
+          <span>Enter site</span>
+          <span class="enter-arrow" aria-hidden="true">→</span>
+        </button>
       </div>
     </div>
 

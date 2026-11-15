@@ -194,15 +194,16 @@
         transform 0.45s cubic-bezier(0.22, 1, 0.36, 1);
     }
 
-    /* Preloaded Live Homepage Portal (Reveals Directly Through Compass Centre) */
+    /* Preloaded Live Homepage Portal — clipped to the compass's own inner ring
+       (radius and homepage depth are driven per-frame from JS during entry) */
     .home-portal-wrap {
       position: fixed;
       inset: 0;
       z-index: 30;
       pointer-events: none;
-      clip-path: circle(0px at var(--iris-x, 50%) var(--iris-y, 42%));
-      transition: clip-path 0.72s cubic-bezier(0.65, 0, 0.25, 1);
+      clip-path: circle(0px at 50% 50%);
       background: #0d1214;
+      overflow: hidden;
     }
 
     .home-portal-frame {
@@ -211,46 +212,34 @@
       border: none;
       display: block;
       background: #0d1214;
+      transform: scale(0.8);
+      will-change: transform;
     }
 
-    /* Crisp Gold Optical Lens Ring on the Expanding Portal Edge */
-    .iris-lens-ring {
-      position: fixed;
-      left: var(--iris-x, 50%);
-      top: var(--iris-y, 42%);
-      width: 0;
-      height: 0;
-      border-radius: 50%;
-      border: 2.5px solid rgba(245, 207, 37, 0.92);
-      box-shadow:
-        0 0 28px rgba(245, 207, 37, 0.4),
-        inset 0 0 24px rgba(245, 207, 37, 0.2);
-      transform: translate(-50%, -50%);
-      z-index: 35;
-      opacity: 0;
-      pointer-events: none;
-      transition:
-        width 0.72s cubic-bezier(0.65, 0, 0.25, 1),
-        height 0.72s cubic-bezier(0.65, 0, 0.25, 1),
-        opacity 0.2s ease;
-    }
-
-    /* Entry Transition Choreography: Bearing Lock & Optical Iris Fly-Through */
+    /* Entry Transition Choreography: Bearing Lock → Fly Through the Compass
+       1. Text clears; compass leans back, then snaps upright as the bearing ring locks.
+       2. The homepage appears inside the compass's own ring, seen through the
+          transparent gaps around the tripod and buildings.
+       3. Camera pushes through the compass (scale driven from JS so the portal
+          stays locked under the ring) until the homepage fills the screen. */
     .welcome-heading,
     .welcome-tagline,
     .enter-site-btn {
       transition:
-        opacity 0.22s ease,
-        transform 0.28s cubic-bezier(0.22, 1, 0.36, 1);
+        opacity 0.2s ease,
+        transform 0.26s cubic-bezier(0.22, 1, 0.36, 1);
     }
 
     body.is-entering .welcome-heading,
     body.is-entering .welcome-tagline,
     body.is-entering .enter-site-btn {
       opacity: 0;
-      transform: translateY(12px) scale(0.96);
+      transform: translateY(14px) scale(0.97);
       pointer-events: none;
     }
+
+    body.is-entering .welcome-tagline { transition-delay: 0.03s; }
+    body.is-entering .enter-site-btn { transition-delay: 0.06s; }
 
     body.is-entering .cinema-backdrop {
       opacity: 0.15;
@@ -259,60 +248,45 @@
 
     body.is-entering .compass-transition-ring {
       opacity: 1;
-      transform: scale(1.06) rotate(0deg);
+      transform: scale(1) rotate(0deg);
+      transition:
+        opacity 0.16s ease,
+        transform 0.34s cubic-bezier(0.2, 1.2, 0.35, 1);
+    }
+
+    body.is-entering .compass-emblem-stage {
+      will-change: transform, opacity;
     }
 
     body.is-entering .compass-medallion-3d {
-      animation: compassPortalLaunch 0.96s cubic-bezier(0.45, 0, 0.15, 1) forwards !important;
+      animation: compassBearingLock 0.36s cubic-bezier(0.4, 0, 0.2, 1) forwards !important;
     }
 
     body.is-entering .compass-relief-img {
-      transform: translateZ(42px);
+      transform: translateZ(18px);
     }
 
-    body.is-entering .cinema-stage {
-      animation: stageLaunch 0.96s cubic-bezier(0.45, 0, 0.15, 1) forwards !important;
+    /* Drop the soft shadow while flying through — keeps the zoomed layer cheap and clean */
+    body.is-pushing .compass-medallion-3d {
+      filter: none;
     }
 
     body.is-entering .cinema-center {
       z-index: 40;
     }
 
-    body.is-iris-open .home-portal-wrap {
-      clip-path: circle(150vmax at var(--iris-x, 50%) var(--iris-y, 42%));
-    }
-
-    body.is-iris-open .iris-lens-ring {
-      width: 300vmax;
-      height: 300vmax;
-      opacity: 1;
-    }
-
-    @keyframes compassPortalLaunch {
+    @keyframes compassBearingLock {
       0% {
-        transform: translate3d(0, 0, 0) scale(1) rotateX(0deg) rotateY(0deg) rotateZ(0deg);
-        opacity: 1;
+        transform: scale(1) rotateX(0deg) rotateY(0deg) rotateZ(0deg);
       }
-      24% {
-        transform: translate3d(0, 0, 0) scale(0.91) rotateX(12deg) rotateY(-10deg) rotateZ(-18deg);
-        opacity: 1;
+      42% {
+        transform: scale(0.92) rotateX(14deg) rotateY(-9deg) rotateZ(-12deg);
       }
-      38% {
-        transform: translate3d(0, 0, 20px) scale(1.04) rotateX(0deg) rotateY(0deg) rotateZ(0deg);
-        opacity: 1;
+      78% {
+        transform: scale(1.03) rotateX(-2deg) rotateY(1deg) rotateZ(1.5deg);
       }
       100% {
-        transform: translate3d(0, 0, 140px) scale(6.4) rotateX(0deg) rotateY(0deg) rotateZ(32deg);
-        opacity: 0;
-      }
-    }
-
-    @keyframes stageLaunch {
-      0% {
-        transform: scale(1) translate3d(0, 0, 0);
-      }
-      100% {
-        transform: scale(1.16) translate3d(0, 0, 0);
+        transform: scale(1) rotateX(0deg) rotateY(0deg) rotateZ(0deg);
       }
     }
 
@@ -501,7 +475,7 @@
 
 <main class="cinema-welcome" aria-labelledby="welcome-heading">
   <!-- Looping Landscape Video Background with Poster & Image Fallback -->
-  <div class="cinema-stage" aria-hidden="true">
+  <div class="cinema-stage" id="cinemaStage" aria-hidden="true">
     <video
       class="cinema-media"
       autoplay
@@ -523,16 +497,15 @@
   <!-- Subtle Dark Gradient Behind Central Composition -->
   <div class="cinema-backdrop" aria-hidden="true"></div>
 
-  <!-- Preloaded Live Homepage Iris Portal (Behind Compass, Above Stage) -->
+  <!-- Live Homepage Portal: revealed inside the compass ring during entry (src set lazily once idle) -->
   <div class="home-portal-wrap" id="homePortal" aria-hidden="true">
-    <iframe class="home-portal-frame" src="index.html" tabindex="-1" title="RG Civil Engineering and Surveying Homepage"></iframe>
+    <iframe class="home-portal-frame" id="homePortalFrame" data-src="index.html" tabindex="-1" title="RG Civil Engineering and Surveying Homepage"></iframe>
   </div>
-  <div class="iris-lens-ring" id="irisLensRing" aria-hidden="true"></div>
 
   <!-- Central Focal Composition -->
   <div class="cinema-center">
     <!-- 1. The Existing RG Logo Compass — Pure Transparent Cutout with 3D Depth -->
-    <div class="compass-emblem-stage">
+    <div class="compass-emblem-stage" id="compassStage">
       <!-- Precision Bearing Calibration Ring (Only visible during Enter transition) -->
       <svg class="compass-transition-ring" viewBox="0 0 240 240" aria-hidden="true">
         <circle cx="120" cy="120" r="108" fill="none" stroke="rgba(245, 207, 37, 0.42)" stroke-width="1" stroke-dasharray="4 6" />
@@ -624,7 +597,65 @@
       });
     }
 
-    // Bearing Lock & Optical Iris Fly-Through directly into the live homepage
+    // ---- Live homepage portal -------------------------------------------------
+    const compassStage = document.getElementById('compassStage');
+    const bearingRing = compassStage ? compassStage.querySelector('.compass-transition-ring') : null;
+    const scene = document.getElementById('cinemaStage');
+    const portal = document.getElementById('homePortal');
+    const portalFrame = document.getElementById('homePortalFrame');
+
+    // Hold the homepage's first slide still inside the portal so the hand-off to the real page
+    // matches; the hero copy is shown during the flight, then eases out as we land so the
+    // real page's own headline entrance plays on as one continuous move.
+    const PORTAL_FREEZE_CSS =
+      '.hero-enter{animation:none!important;opacity:1;transform:none;transition:opacity .14s ease,transform .14s ease}' +
+      'html.rg-portal-landing .hero-enter{opacity:0!important;transform:translateY(14px)!important}' +
+      '.hero-slide{opacity:0!important;transition:none!important}' +
+      '.hero-slide[data-hero-slide="0"]{opacity:1!important}' +
+      '.hero-slide[data-hero-slide="0"] img{transform:scale(1)!important;transition:none!important}' +
+      'html{scrollbar-width:none}';
+
+    function freezePortalDoc() {
+      try {
+        const doc = portalFrame.contentDocument;
+        if (!doc || !doc.head || doc.getElementById('rg-portal-freeze')) return;
+        const style = doc.createElement('style');
+        style.id = 'rg-portal-freeze';
+        style.textContent = PORTAL_FREEZE_CSS;
+        doc.head.appendChild(style);
+      } catch (err) { /* cross-origin or not ready — portal still works unfrozen */ }
+    }
+
+    function loadPortal() {
+      if (!portalFrame || portalFrame.getAttribute('src')) return;
+      portalFrame.addEventListener('load', freezePortalDoc);
+      portalFrame.setAttribute('src', portalFrame.dataset.src || 'index.html');
+    }
+
+    // Load once the welcome scene has settled (keeps first paint and the video fast),
+    // or immediately if the visitor heads for the button.
+    if (!reducedMotion.matches && portalFrame) {
+      const idleLoad = function () {
+        if ('requestIdleCallback' in window) {
+          window.requestIdleCallback(loadPortal, { timeout: 1500 });
+        } else {
+          setTimeout(loadPortal, 600);
+        }
+      };
+      if (document.readyState === 'complete') idleLoad();
+      else window.addEventListener('load', idleLoad);
+      if (enterBtn) {
+        enterBtn.addEventListener('pointerenter', loadPortal, { once: true });
+        enterBtn.addEventListener('focus', loadPortal, { once: true });
+        enterBtn.addEventListener('touchstart', loadPortal, { once: true, passive: true });
+      }
+    }
+
+    function clamp01(v) { return v < 0 ? 0 : v > 1 ? 1 : v; }
+    function easeOutCubic(t) { return 1 - Math.pow(1 - t, 3); }
+    function smooth(t) { return t * t * (3 - 2 * t); }
+
+    // Bearing Lock → fly through the compass into the live homepage
     function enterSite(e) {
       if (e) {
         // Allow modifier clicks (e.g. Cmd/Ctrl+click to open in new tab) to work normally
@@ -638,7 +669,7 @@
 
       const targetUrl = (enterBtn && enterBtn.getAttribute('href')) || 'index.html';
 
-      if (reducedMotion.matches) {
+      if (reducedMotion.matches || !compassStage || !portal || !portalFrame) {
         document.body.classList.add('is-leaving');
         setTimeout(function () {
           window.location.href = targetUrl;
@@ -647,25 +678,140 @@
       }
 
       if (medallion) {
-        const rect = medallion.getBoundingClientRect();
-        const cx = ((rect.left + rect.width / 2) / window.innerWidth * 100).toFixed(2) + '%';
-        const cy = ((rect.top + rect.height / 2) / window.innerHeight * 100).toFixed(2) + '%';
-        document.documentElement.style.setProperty('--iris-x', cx);
-        document.documentElement.style.setProperty('--iris-y', cy);
         medallion.style.transform = '';
         medallion.style.animation = '';
       }
 
+      const LOCK_MS = 340;  // lean back, snap upright, bearing ring locks
+      const OPEN_MS = 220;  // homepage lights up inside the compass ring
+      const PUSH_MS = 860;  // camera flies through the compass
+
+      const vw = window.innerWidth;
+      const vh = window.innerHeight;
+      const sr = compassStage.getBoundingClientRect();
+      const cx = sr.left + sr.width / 2;
+      const cy = sr.top + sr.height / 2;
+      // Portal edge sits under the opaque silver/gold ring band of the artwork (≈0.23–0.26 of width)
+      const r0 = sr.width * 0.24;
+      // Zoom through the clearest gap in the artwork (the sky between the total station and
+      // the buildings) so the emblem parts around the camera instead of smearing across it
+      const GAP_X = 0.541;
+      const GAP_Y = 0.39;
+      const fx = sr.left + sr.width * GAP_X;
+      const fy = sr.top + sr.height * GAP_Y;
+
+      // Smallest zoom at which the ring-clipped portal covers every corner of the viewport
+      function coversAll(s) {
+        const pcx = fx + s * (cx - fx);
+        const pcy = fy + s * (cy - fy);
+        const R = r0 * s;
+        return [[0, 0], [vw, 0], [0, vh], [vw, vh]].every(function (c) {
+          return Math.hypot(c[0] - pcx, c[1] - pcy) <= R;
+        });
+      }
+      let lo = 1;
+      let hi = 2;
+      while (!coversAll(hi) && hi < 2000) hi *= 2;
+      for (let i = 0; i < 24; i++) {
+        const mid = (lo + hi) / 2;
+        if (coversAll(mid)) hi = mid; else lo = mid;
+      }
+      // Keep flying until every part of the artwork has passed the edges of the screen
+      // (nearest artwork to the gap ≈ 0.069 of the emblem width), rather than dissolving it mid-frame
+      const GAP_CLEAR = 0.069;
+      const reachF = Math.hypot(Math.max(fx, vw - fx), Math.max(fy, vh - fy));
+      const sClear = Math.max(hi * 1.05, (reachF / (sr.width * GAP_CLEAR)) * 1.04);
+      const logMax = Math.log(sClear);
+      const pCovered = Math.pow(Math.log(hi * 1.02) / logMax, 1 / 1.75); // push progress when portal fills screen
+
+      // Frame a strong part of the homepage (the hero photo) behind the compass at first,
+      // drifting to the page's true position as we arrive.
+      const K0 = 0.8;
+      let fdx = 0;
+      let fdy = 0;
+      loadPortal();
+      freezePortalDoc();
+      try {
+        const hv = portalFrame.contentDocument && portalFrame.contentDocument.querySelector('.hero-visual');
+        if (hv) {
+          const hr = hv.getBoundingClientRect();
+          const hx = hr.left + hr.width * 0.5;
+          const hy = hr.top + Math.min(hr.height, vh) * 0.4;
+          fdx = Math.max(-vw * 0.6, Math.min(vw * 0.6, -K0 * (hx - fx)));
+          fdy = Math.max(-vh * 0.6, Math.min(vh * 0.6, -K0 * (hy - fy)));
+        }
+      } catch (err) { /* keep centred */ }
+
+      // Freeze the background's current breathing position so the push starts without a jump
+      let sceneBase = '';
+      if (scene) {
+        const ct = window.getComputedStyle(scene).transform;
+        sceneBase = ct && ct !== 'none' ? ct : '';
+        scene.style.animation = 'none';
+        scene.style.transform = sceneBase;
+      }
+
+      portalFrame.style.transformOrigin = fx.toFixed(1) + 'px ' + fy.toFixed(1) + 'px';
+      compassStage.style.transformOrigin = (GAP_X * 100) + '% ' + (GAP_Y * 100) + '%';
       document.body.classList.add('is-entering');
 
-      // Open the optical iris directly through the centre of the RG compass as it launches forward
-      setTimeout(function () {
-        document.body.classList.add('is-iris-open');
-      }, 280);
+      const t0 = performance.now();
+      let pushing = false;
+      let landing = false;
+      let navigated = false;
 
-      setTimeout(function () {
+      function go() {
+        if (navigated) return;
+        navigated = true;
         window.location.replace(targetUrl);
-      }, 1020);
+      }
+
+      function frame(now) {
+        const t = now - t0;
+        const open = easeOutCubic(clamp01((t - (LOCK_MS - 120)) / OPEN_MS));
+        const p = clamp01((t - LOCK_MS) / PUSH_MS);
+        const ease = Math.pow(p, 1.75);           // gentle approach, then a rush through
+        const s = Math.exp(logMax * ease);        // exponential zoom = constant perceived speed growth
+        const q = clamp01(p / pCovered);          // homepage settles exactly as it fills the screen
+        const drift = 1 - smooth(clamp01((q - 0.3) / 0.7));
+        const exit = smooth(clamp01((p - pCovered) / (1 - pCovered)));
+
+        if (p > 0 && !pushing) {
+          pushing = true;
+          document.body.classList.add('is-pushing');
+        }
+        if (!landing && p >= pCovered - 0.06) {
+          landing = true;
+          try { portalFrame.contentDocument.documentElement.classList.add('rg-portal-landing'); } catch (err) {}
+        }
+
+        compassStage.style.transform = 'scale(' + s.toFixed(4) + ')';
+        compassStage.style.opacity = (1 - exit).toFixed(3);
+        if (bearingRing && p > 0) {
+          bearingRing.style.transition = 'none';
+          bearingRing.style.opacity = (1 - smooth(clamp01((p - 0.3) / 0.4))).toFixed(3);
+        }
+
+        portal.style.clipPath = 'circle(' + (r0 * s * open).toFixed(1) + 'px at ' +
+          (fx + s * (cx - fx)).toFixed(1) + 'px ' + (fy + s * (cy - fy)).toFixed(1) + 'px)';
+        portalFrame.style.transform =
+          'translate(' + (fdx * drift).toFixed(1) + 'px, ' + (fdy * drift).toFixed(1) + 'px) ' +
+          'scale(' + (K0 + (1 - K0) * smooth(q)).toFixed(4) + ')';
+
+        if (scene) {
+          scene.style.transform = sceneBase + ' scale(' + (1 + 0.3 * ease).toFixed(4) + ')';
+        }
+
+        if (p < 1) {
+          requestAnimationFrame(frame);
+        } else {
+          setTimeout(go, 40);
+        }
+      }
+      requestAnimationFrame(frame);
+
+      // Safety net if animation frames are throttled (e.g. background tab)
+      setTimeout(go, LOCK_MS + PUSH_MS + 600);
     }
 
     if (enterBtn) {

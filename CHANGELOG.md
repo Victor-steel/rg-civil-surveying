@@ -2,6 +2,7 @@
 
 Newest first. One line per change: date, tool, what changed. Add yours after every edit.
 
+- 2026-11-15 (Antigravity): Integrated refined 3D RG compass and 4K river survey video welcome screen directly into `index.html` (+ dist/) as the permanent front door: displays automatically on every visit and page refresh, features the transparent 3D RG cutout compass, 4K landscape video loop, bearing calibration ring, and a smooth 'Enter site →' entrance transition into the homepage. Backup: `_backup-before-integrated-cinema-welcome-2026-11-15/`.
 - 2026-11-15 (Antigravity): Upgraded `cinema-welcome.html` (+ dist/) entry transition to an optical iris portal: preloads `index.html` in a clipped portal frame behind the 3D cutout RG compass, expands a gold-rimmed circular aperture from the compass centre while the compass banks and zooms past in front, and hands off seamlessly to `index.html` (~1020ms, verified on desktop and mobile); pushed live to `https://victor-steel.github.io/rg-civil-surveying/cinema-welcome.html`.
 - 2026-11-15 (Antigravity): Added 'Bearing Lock & Fly-Through' compass entry transition to `cinema-welcome.html` (+ dist/): clicking 'Enter site →' reveals a precision gold survey degree ring, snaps the 3D RG compass into calibration, and zooms smoothly through the transparent compass centre into `index.html` (~920ms, with `prefers-reduced-motion` fallback); pushed live to `https://victor-steel.github.io/rg-civil-surveying/cinema-welcome.html`.
 

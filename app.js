@@ -1859,92 +1859,54 @@ const initWelcomeScreen = () => {
   if (!welcome || !root.classList.contains("has-welcome")) return;
 
   const enterBtn = welcome.querySelector("[data-welcome-enter]");
-  const centerEl = welcome.querySelector("#welcome-center");
-  const sceneEl = welcome.querySelector("#wc-scene");
-  const reticles = welcome.querySelectorAll(".wc-reticle");
+  const video = welcome.querySelector("#bgVideo");
+  const medallion = welcome.querySelector("#compassMedallion");
+  const reducedMotion = window.matchMedia("(prefers-reduced-motion: reduce)");
+  let isEntering = false;
 
-  const eastEl = welcome.querySelector("#east-val");
-  const northEl = welcome.querySelector("#north-val");
-  const elevEl = welcome.querySelector("#elev-val");
-  const hdopEl = welcome.querySelector("#hdop-val");
-  const haEl = welcome.querySelector("#ha-val");
-
-  let dismissed = false;
-  let touchStartY = null;
-  let jitterInterval = null;
-  let parallaxRaf = null;
-
-  if (enterBtn) {
-    requestAnimationFrame(() => enterBtn.focus({ preventScroll: true }));
+  // Respect reduced-motion preferences for background video
+  const syncReducedMotion = () => {
+    if (!video) return;
+    if (reducedMotion.matches) {
+      video.pause();
+    } else {
+      video.play().catch(() => {});
+    }
+  };
+  syncReducedMotion();
+  if (reducedMotion.addEventListener) {
+    reducedMotion.addEventListener("change", syncReducedMotion);
   }
 
-  // 1. Live Telemetry Micro-Jitter (Simulates active EDM & GPS station tracking)
-  const baseE = 339412.840;
-  const baseN = 555109.210;
-  const baseZ = 41.830;
+  // Subtle 3D tilt on fine pointer movement
+  if (medallion && !reducedMotion.matches && window.matchMedia("(hover: hover) and (pointer: fine)").matches) {
+    welcome.addEventListener("pointermove", (e) => {
+      if (isEntering) return;
+      const nx = (e.clientX / window.innerWidth - 0.5) * 2;
+      const ny = (e.clientY / window.innerHeight - 0.5) * 2;
+      const rotY = (nx * 3.2).toFixed(2);
+      const rotX = (-ny * 3.2).toFixed(2);
+      medallion.style.animation = "none";
+      medallion.style.transform = "translate3d(0, -1px, 0) rotateX(" + rotX + "deg) rotateY(" + rotY + "deg)";
+    }, { passive: true });
 
-  jitterInterval = setInterval(() => {
-    if (dismissed) return;
-    const eJitter = (baseE + (Math.random() * 0.006 - 0.003)).toFixed(3);
-    const nJitter = (baseN + (Math.random() * 0.006 - 0.003)).toFixed(3);
-    const zJitter = (baseZ + (Math.random() * 0.004 - 0.002)).toFixed(3);
-    const hdop = (0.75 + Math.random() * 0.06).toFixed(2);
-    const sec = Math.floor(Math.random() * 10);
-
-    if (eastEl) eastEl.textContent = eJitter;
-    if (northEl) northEl.textContent = nJitter;
-    if (elevEl) elevEl.textContent = zJitter;
-    if (hdopEl) hdopEl.textContent = hdop;
-    if (haEl) haEl.textContent = `124°18′0${sec}″`;
-  }, 1200);
-
-  // 2. 3D Optical Parallax on Mouse Movement
-  const prefersReduced = window.matchMedia("(prefers-reduced-motion: reduce)").matches;
-  const hasFinePointer = window.matchMedia("(hover: hover) and (pointer: fine)").matches;
-  let mouseX = 0, mouseY = 0;
-  let curX = 0, curY = 0;
-
-  const onMouseMove = (e) => {
-    const w = window.innerWidth;
-    const h = window.innerHeight;
-    mouseX = (e.clientX - w / 2) / (w / 2);
-    mouseY = (e.clientY - h / 2) / (h / 2);
-  };
-
-  const animateParallax = () => {
-    if (dismissed) return;
-    curX += (mouseX - curX) * 0.06;
-    curY += (mouseY - curY) * 0.06;
-
-    if (sceneEl) {
-      sceneEl.style.transform = `translate3d(${curX * -12}px, ${curY * -10}px, 0)`;
-    }
-    if (centerEl) {
-      centerEl.style.transform = `translate3d(${curX * 14}px, ${curY * 12}px, 0) rotateX(${curY * -3.5}deg) rotateY(${curX * 4}deg)`;
-    }
-    reticles.forEach((r, idx) => {
-      const depth = (idx + 1) * 7;
-      r.style.transform = `translate(calc(-50% + ${curX * depth}px), calc(-50% + ${curY * depth}px))`;
+    welcome.addEventListener("pointerleave", () => {
+      if (isEntering) return;
+      medallion.style.transform = "";
+      medallion.style.animation = "";
     });
-
-    parallaxRaf = requestAnimationFrame(animateParallax);
-  };
-
-  if (!prefersReduced && hasFinePointer) {
-    window.addEventListener("mousemove", onMouseMove, { passive: true });
-    parallaxRaf = requestAnimationFrame(animateParallax);
   }
 
-  const dismiss = (targetHash) => {
-    if (dismissed) return;
-    dismissed = true;
+  const dismiss = () => {
+    if (isEntering) return;
+    isEntering = true;
 
-    if (jitterInterval) clearInterval(jitterInterval);
-    if (parallaxRaf) cancelAnimationFrame(parallaxRaf);
-    window.removeEventListener("mousemove", onMouseMove);
+    if (medallion) {
+      medallion.style.transform = "";
+      medallion.style.animation = "";
+    }
 
-    root.classList.add("welcome-opening");
-    welcome.classList.add("is-leaving");
+    root.classList.add("welcome-opening", "welcome-entering");
     document.body.style.overflow = "visible";
 
     window.removeEventListener("wheel", onWheel);
@@ -1952,18 +1914,15 @@ const initWelcomeScreen = () => {
     window.removeEventListener("touchstart", onTouchStart);
     window.removeEventListener("touchend", onTouchEnd);
 
-    if (targetHash) {
-      const targetEl = document.querySelector(targetHash);
-      if (targetEl) {
-        setTimeout(() => targetEl.scrollIntoView({ behavior: "smooth" }), 120);
-      }
-    }
-
+    // After the compass bearing lock and lift animation, complete entrance
     setTimeout(() => {
-      root.classList.remove("has-welcome", "welcome-opening");
-      document.body.style.overflow = "";
-      welcome.hidden = true;
-    }, 660);
+      welcome.classList.add("is-leaving");
+      setTimeout(() => {
+        root.classList.remove("has-welcome", "welcome-opening", "welcome-entering");
+        document.body.style.overflow = "";
+        welcome.hidden = true;
+      }, 720);
+    }, 380);
   };
 
   const onWheel = (e) => {
@@ -1977,6 +1936,7 @@ const initWelcomeScreen = () => {
     }
   };
 
+  let touchStartY = null;
   const onTouchStart = (e) => {
     if (e.touches && e.touches.length === 1) {
       touchStartY = e.touches[0].clientY;
@@ -1990,16 +1950,12 @@ const initWelcomeScreen = () => {
     if (dy > 24) dismiss();
   };
 
-  welcome.addEventListener("click", (e) => {
-    if (e.target.closest("[data-welcome-stop]")) return;
-    const jump = e.target.closest("[data-welcome-jump]");
-    if (jump) {
+  if (enterBtn) {
+    enterBtn.addEventListener("click", (e) => {
       e.preventDefault();
-      dismiss(jump.getAttribute("data-welcome-jump"));
-      return;
-    }
-    dismiss();
-  });
+      dismiss();
+    });
+  }
 
   window.addEventListener("wheel", onWheel, { passive: true });
   window.addEventListener("keydown", onKey);
