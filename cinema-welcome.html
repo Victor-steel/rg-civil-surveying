@@ -183,81 +183,126 @@
     /* Precision Bearing Calibration Ring (Reveals Only During Entry Transition) */
     .compass-transition-ring {
       position: absolute;
-      inset: -18%;
-      width: 136%;
-      height: 136%;
+      inset: -24%;
+      width: 148%;
+      height: 148%;
       pointer-events: none;
       opacity: 0;
-      transform: scale(0.86) rotate(-38deg);
+      transform: scale(0.84) rotate(-42deg);
       transition:
-        opacity 0.22s ease,
-        transform 0.55s cubic-bezier(0.22, 1, 0.36, 1);
+        opacity 0.2s ease,
+        transform 0.45s cubic-bezier(0.22, 1, 0.36, 1);
     }
 
-    /* Entry Transition Choreography: Bearing Lock & Fly-Through */
+    /* Preloaded Live Homepage Portal (Reveals Directly Through Compass Centre) */
+    .home-portal-wrap {
+      position: fixed;
+      inset: 0;
+      z-index: 30;
+      pointer-events: none;
+      clip-path: circle(0px at var(--iris-x, 50%) var(--iris-y, 42%));
+      transition: clip-path 0.72s cubic-bezier(0.65, 0, 0.25, 1);
+      background: #0d1214;
+    }
+
+    .home-portal-frame {
+      width: 100%;
+      height: 100%;
+      border: none;
+      display: block;
+      background: #0d1214;
+    }
+
+    /* Crisp Gold Optical Lens Ring on the Expanding Portal Edge */
+    .iris-lens-ring {
+      position: fixed;
+      left: var(--iris-x, 50%);
+      top: var(--iris-y, 42%);
+      width: 0;
+      height: 0;
+      border-radius: 50%;
+      border: 2.5px solid rgba(245, 207, 37, 0.92);
+      box-shadow:
+        0 0 28px rgba(245, 207, 37, 0.4),
+        inset 0 0 24px rgba(245, 207, 37, 0.2);
+      transform: translate(-50%, -50%);
+      z-index: 35;
+      opacity: 0;
+      pointer-events: none;
+      transition:
+        width 0.72s cubic-bezier(0.65, 0, 0.25, 1),
+        height 0.72s cubic-bezier(0.65, 0, 0.25, 1),
+        opacity 0.2s ease;
+    }
+
+    /* Entry Transition Choreography: Bearing Lock & Optical Iris Fly-Through */
     .welcome-heading,
     .welcome-tagline,
     .enter-site-btn {
       transition:
-        opacity 0.24s ease,
-        transform 0.3s cubic-bezier(0.22, 1, 0.36, 1);
-    }
-
-    .cinema-transition-veil {
-      position: fixed;
-      inset: 0;
-      z-index: 20;
-      background: var(--ink);
-      opacity: 0;
-      pointer-events: none;
-      transition: opacity 0.34s cubic-bezier(0.4, 0, 0.2, 1);
+        opacity 0.22s ease,
+        transform 0.28s cubic-bezier(0.22, 1, 0.36, 1);
     }
 
     body.is-entering .welcome-heading,
     body.is-entering .welcome-tagline,
     body.is-entering .enter-site-btn {
       opacity: 0;
-      transform: translateY(10px) scale(0.97);
+      transform: translateY(12px) scale(0.96);
       pointer-events: none;
     }
 
     body.is-entering .cinema-backdrop {
-      opacity: 0.2;
-      transition: opacity 0.32s ease;
+      opacity: 0.15;
+      transition: opacity 0.3s ease;
     }
 
     body.is-entering .compass-transition-ring {
-      opacity: 0.92;
+      opacity: 1;
       transform: scale(1.06) rotate(0deg);
     }
 
     body.is-entering .compass-medallion-3d {
-      animation: compassPortalLaunch 0.88s cubic-bezier(0.32, 0, 0.15, 1) forwards !important;
+      animation: compassPortalLaunch 0.96s cubic-bezier(0.45, 0, 0.15, 1) forwards !important;
     }
 
     body.is-entering .compass-relief-img {
-      transform: translateZ(34px);
+      transform: translateZ(42px);
     }
 
     body.is-entering .cinema-stage {
-      animation: stageLaunch 0.88s cubic-bezier(0.32, 0, 0.15, 1) forwards !important;
+      animation: stageLaunch 0.96s cubic-bezier(0.45, 0, 0.15, 1) forwards !important;
     }
 
-    body.is-entering.is-veil-closed .cinema-transition-veil {
+    body.is-entering .cinema-center {
+      z-index: 40;
+    }
+
+    body.is-iris-open .home-portal-wrap {
+      clip-path: circle(150vmax at var(--iris-x, 50%) var(--iris-y, 42%));
+    }
+
+    body.is-iris-open .iris-lens-ring {
+      width: 300vmax;
+      height: 300vmax;
       opacity: 1;
     }
 
     @keyframes compassPortalLaunch {
       0% {
-        transform: translate3d(0, 0, 0) scale(1) rotateZ(0deg);
+        transform: translate3d(0, 0, 0) scale(1) rotateX(0deg) rotateY(0deg) rotateZ(0deg);
         opacity: 1;
       }
-      28% {
-        transform: translate3d(0, 0, 0) scale(0.92) rotateZ(-14deg);
+      24% {
+        transform: translate3d(0, 0, 0) scale(0.91) rotateX(12deg) rotateY(-10deg) rotateZ(-18deg);
+        opacity: 1;
+      }
+      38% {
+        transform: translate3d(0, 0, 20px) scale(1.04) rotateX(0deg) rotateY(0deg) rotateZ(0deg);
         opacity: 1;
       }
       100% {
-        transform: translate3d(0, 0, 120px) scale(4.8) rotateZ(22deg);
+        transform: translate3d(0, 0, 140px) scale(6.4) rotateX(0deg) rotateY(0deg) rotateZ(32deg);
         opacity: 0;
       }
     }
@@ -267,7 +312,7 @@
         transform: scale(1) translate3d(0, 0, 0);
       }
       100% {
-        transform: scale(1.14) translate3d(0, 0, 0);
+        transform: scale(1.16) translate3d(0, 0, 0);
       }
     }
 
@@ -454,8 +499,6 @@
 </head>
 <body>
 
-<div class="cinema-transition-veil" aria-hidden="true"></div>
-
 <main class="cinema-welcome" aria-labelledby="welcome-heading">
   <!-- Looping Landscape Video Background with Poster & Image Fallback -->
   <div class="cinema-stage" aria-hidden="true">
@@ -479,6 +522,12 @@
 
   <!-- Subtle Dark Gradient Behind Central Composition -->
   <div class="cinema-backdrop" aria-hidden="true"></div>
+
+  <!-- Preloaded Live Homepage Iris Portal (Behind Compass, Above Stage) -->
+  <div class="home-portal-wrap" id="homePortal" aria-hidden="true">
+    <iframe class="home-portal-frame" src="index.html" tabindex="-1" title="RG Civil Engineering and Surveying Homepage"></iframe>
+  </div>
+  <div class="iris-lens-ring" id="irisLensRing" aria-hidden="true"></div>
 
   <!-- Central Focal Composition -->
   <div class="cinema-center">
@@ -575,7 +624,7 @@
       });
     }
 
-    // Bearing Lock & Fly-Through transition into main homepage
+    // Bearing Lock & Optical Iris Fly-Through directly into the live homepage
     function enterSite(e) {
       if (e) {
         // Allow modifier clicks (e.g. Cmd/Ctrl+click to open in new tab) to work normally
@@ -598,19 +647,25 @@
       }
 
       if (medallion) {
+        const rect = medallion.getBoundingClientRect();
+        const cx = ((rect.left + rect.width / 2) / window.innerWidth * 100).toFixed(2) + '%';
+        const cy = ((rect.top + rect.height / 2) / window.innerHeight * 100).toFixed(2) + '%';
+        document.documentElement.style.setProperty('--iris-x', cx);
+        document.documentElement.style.setProperty('--iris-y', cy);
         medallion.style.transform = '';
         medallion.style.animation = '';
       }
 
       document.body.classList.add('is-entering');
 
+      // Open the optical iris directly through the centre of the RG compass as it launches forward
       setTimeout(function () {
-        document.body.classList.add('is-veil-closed');
-      }, 620);
+        document.body.classList.add('is-iris-open');
+      }, 280);
 
       setTimeout(function () {
-        window.location.href = targetUrl;
-      }, 920);
+        window.location.replace(targetUrl);
+      }, 1020);
     }
 
     if (enterBtn) {
