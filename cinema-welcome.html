@@ -176,7 +176,99 @@
       display: block;
       object-fit: contain;
       transform: translateZ(4px);
+      transition: transform 0.65s cubic-bezier(0.22, 1, 0.36, 1);
       pointer-events: none;
+    }
+
+    /* Precision Bearing Calibration Ring (Reveals Only During Entry Transition) */
+    .compass-transition-ring {
+      position: absolute;
+      inset: -18%;
+      width: 136%;
+      height: 136%;
+      pointer-events: none;
+      opacity: 0;
+      transform: scale(0.86) rotate(-38deg);
+      transition:
+        opacity 0.22s ease,
+        transform 0.55s cubic-bezier(0.22, 1, 0.36, 1);
+    }
+
+    /* Entry Transition Choreography: Bearing Lock & Fly-Through */
+    .welcome-heading,
+    .welcome-tagline,
+    .enter-site-btn {
+      transition:
+        opacity 0.24s ease,
+        transform 0.3s cubic-bezier(0.22, 1, 0.36, 1);
+    }
+
+    .cinema-transition-veil {
+      position: fixed;
+      inset: 0;
+      z-index: 20;
+      background: var(--ink);
+      opacity: 0;
+      pointer-events: none;
+      transition: opacity 0.34s cubic-bezier(0.4, 0, 0.2, 1);
+    }
+
+    body.is-entering .welcome-heading,
+    body.is-entering .welcome-tagline,
+    body.is-entering .enter-site-btn {
+      opacity: 0;
+      transform: translateY(10px) scale(0.97);
+      pointer-events: none;
+    }
+
+    body.is-entering .cinema-backdrop {
+      opacity: 0.2;
+      transition: opacity 0.32s ease;
+    }
+
+    body.is-entering .compass-transition-ring {
+      opacity: 0.92;
+      transform: scale(1.06) rotate(0deg);
+    }
+
+    body.is-entering .compass-medallion-3d {
+      animation: compassPortalLaunch 0.88s cubic-bezier(0.32, 0, 0.15, 1) forwards !important;
+    }
+
+    body.is-entering .compass-relief-img {
+      transform: translateZ(34px);
+    }
+
+    body.is-entering .cinema-stage {
+      animation: stageLaunch 0.88s cubic-bezier(0.32, 0, 0.15, 1) forwards !important;
+    }
+
+    body.is-entering.is-veil-closed .cinema-transition-veil {
+      opacity: 1;
+    }
+
+    @keyframes compassPortalLaunch {
+      0% {
+        transform: translate3d(0, 0, 0) scale(1) rotateZ(0deg);
+        opacity: 1;
+      }
+      28% {
+        transform: translate3d(0, 0, 0) scale(0.92) rotateZ(-14deg);
+        opacity: 1;
+      }
+      100% {
+        transform: translate3d(0, 0, 120px) scale(4.8) rotateZ(22deg);
+        opacity: 0;
+      }
+    }
+
+    @keyframes stageLaunch {
+      0% {
+        transform: scale(1) translate3d(0, 0, 0);
+      }
+      100% {
+        transform: scale(1.14) translate3d(0, 0, 0);
+      }
     }
 
     /* 2. Company Name Beneath the Compass */
@@ -345,6 +437,10 @@
         transform: none !important;
       }
 
+      .compass-transition-ring {
+        display: none !important;
+      }
+
       body {
         transition: opacity 0.2s ease;
       }
@@ -357,6 +453,8 @@
   </style>
 </head>
 <body>
+
+<div class="cinema-transition-veil" aria-hidden="true"></div>
 
 <main class="cinema-welcome" aria-labelledby="welcome-heading">
   <!-- Looping Landscape Video Background with Poster & Image Fallback -->
@@ -386,6 +484,16 @@
   <div class="cinema-center">
     <!-- 1. The Existing RG Logo Compass — Pure Transparent Cutout with 3D Depth -->
     <div class="compass-emblem-stage">
+      <!-- Precision Bearing Calibration Ring (Only visible during Enter transition) -->
+      <svg class="compass-transition-ring" viewBox="0 0 240 240" aria-hidden="true">
+        <circle cx="120" cy="120" r="108" fill="none" stroke="rgba(245, 207, 37, 0.42)" stroke-width="1" stroke-dasharray="4 6" />
+        <circle cx="120" cy="120" r="115" fill="none" stroke="rgba(245, 207, 37, 0.22)" stroke-width="0.75" />
+        <line x1="120" y1="2" x2="120" y2="14" stroke="#f5cf25" stroke-width="1.5" />
+        <line x1="120" y1="226" x2="120" y2="238" stroke="#f5cf25" stroke-width="1.5" />
+        <line x1="2" y1="120" x2="14" y2="120" stroke="#f5cf25" stroke-width="1.5" />
+        <line x1="226" y1="120" x2="238" y2="120" stroke="#f5cf25" stroke-width="1.5" />
+      </svg>
+
       <div class="compass-medallion-3d" id="compassMedallion">
         <img
           class="compass-base-img"
@@ -451,23 +559,23 @@
     // Subtle, restrained 3D tilt on fine pointer movement (no spinning)
     if (medallion && !reducedMotion.matches && window.matchMedia('(hover: hover) and (pointer: fine)').matches) {
       window.addEventListener('pointermove', function (e) {
+        if (isEntering) return;
         const nx = (e.clientX / window.innerWidth - 0.5) * 2;
         const ny = (e.clientY / window.innerHeight - 0.5) * 2;
         const rotY = (nx * 3.2).toFixed(2);
         const rotX = (-ny * 3.2).toFixed(2);
         medallion.style.animation = 'none';
         medallion.style.transform = 'translate3d(0, -1px, 0) rotateX(' + rotX + 'deg) rotateY(' + rotY + 'deg)';
-        medallion.style.setProperty('--light-x', (30 - nx * 10).toFixed(1) + '%');
-        medallion.style.setProperty('--light-y', (24 - ny * 10).toFixed(1) + '%');
       }, { passive: true });
 
       window.addEventListener('pointerleave', function () {
+        if (isEntering) return;
         medallion.style.transform = '';
         medallion.style.animation = '';
       });
     }
 
-    // Smooth fade into main homepage when visitor selects "Enter site"
+    // Bearing Lock & Fly-Through transition into main homepage
     function enterSite(e) {
       if (e) {
         // Allow modifier clicks (e.g. Cmd/Ctrl+click to open in new tab) to work normally
@@ -478,11 +586,31 @@
       }
       if (isEntering) return;
       isEntering = true;
-      document.body.classList.add('is-leaving');
-      const delay = reducedMotion.matches ? 150 : 420;
+
+      const targetUrl = (enterBtn && enterBtn.getAttribute('href')) || 'index.html';
+
+      if (reducedMotion.matches) {
+        document.body.classList.add('is-leaving');
+        setTimeout(function () {
+          window.location.href = targetUrl;
+        }, 160);
+        return;
+      }
+
+      if (medallion) {
+        medallion.style.transform = '';
+        medallion.style.animation = '';
+      }
+
+      document.body.classList.add('is-entering');
+
       setTimeout(function () {
-        window.location.href = enterBtn.getAttribute('href') || 'index.html';
-      }, delay);
+        document.body.classList.add('is-veil-closed');
+      }, 620);
+
+      setTimeout(function () {
+        window.location.href = targetUrl;
+      }, 920);
     }
 
     if (enterBtn) {
