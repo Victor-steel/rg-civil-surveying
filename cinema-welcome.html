@@ -87,11 +87,11 @@
       width: 100%;
       height: 100%;
       object-fit: cover;
-      object-position: center 54%;
-      filter: contrast(1.03) saturate(1.02) brightness(0.94);
+      object-position: 46% 58%;
+      filter: contrast(1.03) saturate(1.03) brightness(0.98);
     }
 
-    /* Subtle Dark Gradient Behind Central Composition (Scenery & Tripod Remain Visible) */
+    /* Subtle Dark Gradient Behind Text Only — Keeps Compass Interior 100% Clear & Bright */
     .cinema-backdrop {
       position: absolute;
       inset: 0;
@@ -99,23 +99,17 @@
       pointer-events: none;
       background:
         radial-gradient(
-          ellipse 54% 50% at 50% 50%,
-          rgba(7, 11, 13, 0.64) 0%,
-          rgba(7, 11, 13, 0.42) 45%,
-          rgba(7, 11, 13, 0.14) 72%,
-          transparent 90%
-        ),
-        radial-gradient(
-          ellipse 96% 92% at 50% 50%,
-          transparent 56%,
-          rgba(7, 11, 13, 0.48) 100%
+          ellipse 48% 32% at 50% 66%,
+          rgba(7, 11, 13, 0.56) 0%,
+          rgba(7, 11, 13, 0.28) 55%,
+          transparent 88%
         ),
         linear-gradient(
           180deg,
-          rgba(7, 11, 13, 0.32) 0%,
+          rgba(7, 11, 13, 0.16) 0%,
           transparent 24%,
           transparent 76%,
-          rgba(7, 11, 13, 0.48) 100%
+          rgba(7, 11, 13, 0.42) 100%
         );
     }
 
@@ -131,13 +125,13 @@
       width: 100%;
     }
 
-    /* 1. The Existing RG Logo Compass in Refined 3D */
+    /* 1. The Existing RG Logo Compass — Pure Transparent Cutout with 3D Relief */
     .compass-emblem-stage {
       position: relative;
-      width: clamp(134px, 15.5vw, 172px);
-      height: clamp(134px, 15.5vw, 172px);
-      margin-bottom: clamp(22px, 3.2vh, 32px);
-      perspective: 850px;
+      width: clamp(204px, 23vw, 260px);
+      height: clamp(204px, 23vw, 260px);
+      margin-bottom: clamp(14px, 2.2vh, 22px);
+      perspective: 900px;
       user-select: none;
     }
 
@@ -145,45 +139,28 @@
       position: relative;
       width: 100%;
       height: 100%;
-      border-radius: 50%;
       transform-style: preserve-3d;
       will-change: transform;
       animation: compassFloat 7.5s ease-in-out infinite alternate;
       transition: transform 0.25s cubic-bezier(0.22, 1, 0.36, 1);
-      filter:
-        drop-shadow(0 20px 36px rgba(0, 0, 0, 0.68))
-        drop-shadow(0 5px 12px rgba(0, 0, 0, 0.5));
+      filter: drop-shadow(0 3px 6px rgba(0, 0, 0, 0.48));
     }
 
     @keyframes compassFloat {
       0% {
-        transform: translate3d(0, 2px, 0) rotateX(2deg) rotateY(-2.2deg);
+        transform: translate3d(0, 2px, 0) rotateX(2.2deg) rotateY(-2.4deg);
       }
       100% {
-        transform: translate3d(0, -4px, 0) rotateX(-2.2deg) rotateY(2.2deg);
+        transform: translate3d(0, -4px, 0) rotateX(-2.2deg) rotateY(2.4deg);
       }
     }
 
-    /* Subtle Machined Brushed-Graphite Outer Bezel Depth Ring */
-    .compass-bezel-back {
-      position: absolute;
-      inset: 0.8%;
-      border-radius: 50%;
-      background: linear-gradient(135deg, #343940 0%, #171a1d 52%, #0b0d0f 100%);
-      box-shadow:
-        inset 0 1px 1.5px rgba(255, 255, 255, 0.2),
-        0 3px 8px rgba(0, 0, 0, 0.65);
-      transform: translateZ(-4px);
-      pointer-events: none;
-    }
-
-    /* Brushed Graphite Disc Base with Original Artwork Fallback */
+    /* Transparent Cutout 3D Base Layer (Follows Artwork Silhouette Only) */
     .compass-base-img {
       position: absolute;
       inset: 0;
       width: 100%;
       height: 100%;
-      border-radius: 50%;
       display: block;
       object-fit: contain;
       transform: translateZ(0px);
@@ -196,26 +173,9 @@
       inset: 0;
       width: 100%;
       height: 100%;
-      border-radius: 50%;
       display: block;
       object-fit: contain;
-      transform: translateZ(5px);
-      pointer-events: none;
-      filter: drop-shadow(0 2px 3px rgba(0, 0, 0, 0.42));
-    }
-
-    /* Soft Directional Specular Sheen Across the Medallion */
-    .compass-directional-light {
-      position: absolute;
-      inset: 0;
-      border-radius: 50%;
-      background: radial-gradient(
-        circle at var(--light-x, 30%) var(--light-y, 24%),
-        rgba(255, 255, 255, 0.11) 0%,
-        rgba(255, 255, 255, 0.03) 38%,
-        transparent 68%
-      );
-      transform: translateZ(6px);
+      transform: translateZ(4px);
       pointer-events: none;
     }
 
@@ -320,31 +280,30 @@
       }
 
       .cinema-media {
-        object-position: 76% 52%;
+        object-position: 62% 56%;
       }
 
       .cinema-backdrop {
         background:
           radial-gradient(
-            ellipse 86% 56% at 50% 50%,
-            rgba(7, 11, 13, 0.68) 0%,
-            rgba(7, 11, 13, 0.44) 52%,
-            rgba(7, 11, 13, 0.16) 82%,
-            transparent 100%
+            ellipse 82% 34% at 50% 64%,
+            rgba(7, 11, 13, 0.58) 0%,
+            rgba(7, 11, 13, 0.30) 56%,
+            transparent 90%
           ),
           linear-gradient(
             180deg,
-            rgba(7, 11, 13, 0.36) 0%,
+            rgba(7, 11, 13, 0.18) 0%,
             transparent 24%,
             transparent 76%,
-            rgba(7, 11, 13, 0.52) 100%
+            rgba(7, 11, 13, 0.44) 100%
           );
       }
 
       .compass-emblem-stage {
-        width: clamp(114px, 27vw, 138px);
-        height: clamp(114px, 27vw, 138px);
-        margin-bottom: 18px;
+        width: clamp(160px, 41vw, 196px);
+        height: clamp(160px, 41vw, 196px);
+        margin-bottom: 14px;
       }
 
       .welcome-heading {
@@ -365,9 +324,9 @@
 
     @media (max-height: 620px) {
       .compass-emblem-stage {
-        width: 104px;
-        height: 104px;
-        margin-bottom: 14px;
+        width: 136px;
+        height: 136px;
+        margin-bottom: 12px;
       }
       .welcome-heading {
         font-size: 1.65rem;
@@ -425,28 +384,26 @@
 
   <!-- Central Focal Composition -->
   <div class="cinema-center">
-    <!-- 1. The Existing RG Logo Compass in Refined 3D -->
+    <!-- 1. The Existing RG Logo Compass — Pure Transparent Cutout with 3D Depth -->
     <div class="compass-emblem-stage">
       <div class="compass-medallion-3d" id="compassMedallion">
-        <div class="compass-bezel-back" aria-hidden="true"></div>
         <img
           class="compass-base-img"
-          src="assets/brand/rg-logo-compass-3d.png"
+          src="assets/brand/rg-logo-compass-cutout-3d.png"
           alt="RG Civil Engineering and Surveying compass logo"
-          width="384"
-          height="384"
+          width="400"
+          height="400"
           decoding="async"
         />
         <img
           class="compass-relief-img"
-          src="assets/brand/rg-logo-emblem-layer.png"
+          src="assets/brand/rg-logo-compass-cutout-front.png"
           alt=""
           aria-hidden="true"
-          width="384"
-          height="384"
+          width="400"
+          height="400"
           decoding="async"
         />
-        <div class="compass-directional-light" aria-hidden="true"></div>
       </div>
     </div>
 
