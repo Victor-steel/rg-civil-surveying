@@ -14,7 +14,7 @@
     <link rel="preconnect" href="https://fonts.googleapis.com" />
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
     <link href="https://fonts.googleapis.com/css2?family=DM+Mono:ital,wght@0,400;0,500;1,400&family=Space+Grotesk:wght@400;500;600;700&display=swap" rel="stylesheet" />
-    <link rel="stylesheet" href="styles.css?v=20261114-whatsapp" />
+    <link rel="stylesheet" href="styles.css?v=20261116-mobile" />
     <!-- Welcome screen: Living 3D Compass & 4K Cinema Welcome Entrance -->
     <script>
       // Show living welcome screen on every fresh visit and refresh
@@ -30,7 +30,7 @@
 
     <!-- Full-Viewport Welcome Screen: 4K Cumbrian River Survey with Living 3D RG Compass -->
     <div class="welcome-screen cinema-welcome-stage" id="welcome-screen" role="dialog" aria-modal="true" aria-labelledby="welcome-heading" data-welcome>
-      <!-- Looping Landscape Video Background with Poster & Image Fallback -->
+      <!-- Looping Responsive Video Background (4K Landscape Desktop / 9:16 Portrait Mobile) -->
       <div class="cinema-stage" id="cinemaStage" aria-hidden="true">
         <video
           class="cinema-media"
@@ -38,16 +38,45 @@
           muted
           loop
           playsinline
-          poster="assets/video/cumbria-river-survey-4k-poster.jpg"
+          preload="auto"
+          data-desktop-src="assets/video/cumbria-river-survey-4k.mp4"
+          data-desktop-poster="assets/video/cumbria-river-survey-4k-poster.jpg"
+          data-mobile-src="assets/video/cumbria-river-survey-mobile.mp4"
+          data-mobile-poster="assets/video/cumbria-river-survey-mobile-poster.jpg"
           id="bgVideo"
         >
-          <source src="assets/video/cumbria-river-survey-4k.mp4" type="video/mp4" />
           <img
             class="cinema-media"
             src="assets/video/cumbria-river-survey-4k-poster.jpg"
             alt="RG Civil Engineering and Surveying Cumbrian River Survey"
           />
         </video>
+        <script>
+          (function () {
+            var v = document.getElementById("bgVideo");
+            if (!v || !window.matchMedia) return;
+            var mq = window.matchMedia("(max-width: 768px), ((orientation: portrait) and (max-width: 1024px))");
+            function syncVideoSource(shouldPlay) {
+              var isMob = mq.matches;
+              var nextSrc = isMob ? v.dataset.mobileSrc : v.dataset.desktopSrc;
+              var nextPoster = isMob ? v.dataset.mobilePoster : v.dataset.desktopPoster;
+              if (nextPoster && v.getAttribute("poster") !== nextPoster) {
+                v.setAttribute("poster", nextPoster);
+              }
+              if (nextSrc && v.getAttribute("src") !== nextSrc) {
+                v.setAttribute("src", nextSrc);
+                v.load();
+                if (shouldPlay && !window.matchMedia("(prefers-reduced-motion: reduce)").matches) {
+                  v.play().catch(function () {});
+                }
+              }
+            }
+            syncVideoSource(false);
+            if (mq.addEventListener) {
+              mq.addEventListener("change", function () { syncVideoSource(true); });
+            }
+          })();
+        </script>
       </div>
 
       <!-- Subtle Dark Gradient Behind Central Composition -->
