@@ -384,52 +384,47 @@
       transform: translateX(3px);
     }
 
-    /* Responsive Scaling for Tablets and Phones — Portrait / Mobile framing uses dedicated 9:16 river survey composition */
-    @media (max-width: 768px), (orientation: portrait) and (max-width: 1024px) {
+    /* Responsive Scaling for Tablets and Phones */
+    @media (max-width: 768px) {
       .cinema-welcome {
         padding: 24px 20px;
       }
 
       .cinema-media {
-        object-position: 92% 50%;
+        object-position: 62% 56%;
       }
 
       .cinema-backdrop {
         background:
           radial-gradient(
-            ellipse 82% 34% at 50% 60%,
-            rgba(7, 11, 13, 0.56) 0%,
-            rgba(7, 11, 13, 0.28) 56%,
-            transparent 88%
+            ellipse 82% 34% at 50% 64%,
+            rgba(7, 11, 13, 0.58) 0%,
+            rgba(7, 11, 13, 0.30) 56%,
+            transparent 90%
           ),
           linear-gradient(
             180deg,
-            rgba(7, 11, 13, 0.16) 0%,
+            rgba(7, 11, 13, 0.18) 0%,
             transparent 24%,
-            transparent 74%,
-            rgba(7, 11, 13, 0.42) 100%
+            transparent 76%,
+            rgba(7, 11, 13, 0.44) 100%
           );
       }
 
-      .cinema-center {
-        padding-bottom: clamp(22px, 5vh, 48px);
-      }
-
       .compass-emblem-stage {
-        width: clamp(164px, 43vw, 196px);
-        height: clamp(164px, 43vw, 196px);
+        width: clamp(160px, 41vw, 196px);
+        height: clamp(160px, 41vw, 196px);
         margin-bottom: 14px;
       }
 
       .welcome-heading {
-        font-size: clamp(1.65rem, 6.7vw, 2.2rem);
+        font-size: clamp(1.68rem, 6.8vw, 2.2rem);
         margin-bottom: 8px;
       }
 
       .welcome-tagline {
-        font-size: clamp(0.84rem, 3.6vw, 0.96rem);
+        font-size: clamp(0.94rem, 3.8vw, 1.05rem);
         margin-bottom: 24px;
-        max-width: none;
       }
 
       .enter-site-btn {
@@ -479,7 +474,7 @@
 <body>
 
 <main class="cinema-welcome" aria-labelledby="welcome-heading">
-  <!-- Looping Responsive Video Background (4K Landscape Desktop / 9:16 Portrait Mobile) -->
+  <!-- Looping Landscape Video Background with Poster & Image Fallback -->
   <div class="cinema-stage" id="cinemaStage" aria-hidden="true">
     <video
       class="cinema-media"
@@ -487,65 +482,16 @@
       muted
       loop
       playsinline
-      webkit-playsinline
-      preload="auto"
-      data-desktop-src="assets/video/cumbria-river-survey-4k.mp4"
-      data-desktop-poster="assets/video/cumbria-river-survey-4k-poster.jpg"
-      data-mobile-src="assets/video/cumbria-river-survey-mobile.mp4?v=20261116b"
-      data-mobile-poster="assets/video/cumbria-river-survey-mobile-poster.jpg?v=20261116b"
+      poster="assets/video/cumbria-river-survey-4k-poster.jpg"
       id="bgVideo"
     >
+      <source src="assets/video/cumbria-river-survey-4k.mp4" type="video/mp4" />
       <img
         class="cinema-media"
         src="assets/video/cumbria-river-survey-4k-poster.jpg"
         alt=""
       />
     </video>
-    <script>
-      (function () {
-        var v = document.getElementById("bgVideo");
-        if (!v || !window.matchMedia) return;
-        var mq = window.matchMedia("(max-width: 768px), ((orientation: portrait) and (max-width: 1024px))");
-        var rm = window.matchMedia("(prefers-reduced-motion: reduce)");
-        function ensurePlaying() {
-          if (rm.matches) return;
-          v.defaultMuted = true;
-          v.muted = true;
-          v.playsInline = true;
-          v.autoplay = true;
-          v.loop = true;
-          if (v.paused) {
-            var p = v.play();
-            if (p && typeof p.catch === "function") p.catch(function () {});
-          }
-        }
-        function syncVideoSource() {
-          var isMob = mq.matches;
-          var nextSrc = isMob ? v.dataset.mobileSrc : v.dataset.desktopSrc;
-          var nextPoster = isMob ? v.dataset.mobilePoster : v.dataset.desktopPoster;
-          v.defaultMuted = true;
-          v.muted = true;
-          v.playsInline = true;
-          v.setAttribute("playsinline", "");
-          v.setAttribute("webkit-playsinline", "");
-          if (nextPoster && v.getAttribute("poster") !== nextPoster) {
-            v.setAttribute("poster", nextPoster);
-          }
-          if (nextSrc && v.getAttribute("src") !== nextSrc) {
-            v.src = nextSrc;
-            v.load();
-          }
-          ensurePlaying();
-        }
-        v.addEventListener("loadeddata", ensurePlaying);
-        v.addEventListener("canplay", ensurePlaying);
-        window.addEventListener("touchstart", ensurePlaying, { passive: true, once: true });
-        syncVideoSource();
-        if (mq.addEventListener) {
-          mq.addEventListener("change", syncVideoSource);
-        }
-      })();
-    </script>
   </div>
 
   <!-- Subtle Dark Gradient Behind Central Composition -->

@@ -14,11 +14,12 @@
     <link rel="preconnect" href="https://fonts.googleapis.com" />
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
     <link href="https://fonts.googleapis.com/css2?family=DM+Mono:ital,wght@0,400;0,500;1,400&family=Space+Grotesk:wght@400;500;600;700&display=swap" rel="stylesheet" />
-    <link rel="stylesheet" href="styles.css?v=20261116-mobile" />
-    <!-- Welcome screen: Living 3D Compass & 4K Cinema Welcome Entrance -->
+    <link rel="stylesheet" href="styles.css?v=20261116-nomobwelcome" />
+    <!-- Welcome screen: Living 3D Compass & 4K Cinema Welcome Entrance (Desktop only for now) -->
     <script>
-      // Show living welcome screen on every fresh visit and refresh
-      if (!location.search) {
+      // Show living welcome screen on desktop on fresh visit and refresh; skip on mobile/portrait until mobile video is ready
+      var isMobileOrPortrait = window.matchMedia && window.matchMedia("(max-width: 768px), ((orientation: portrait) and (max-width: 1024px))").matches;
+      if (!isMobileOrPortrait && !location.search) {
         if (!location.hash || location.hash === "#top" || location.hash === "#coverage") {
           document.documentElement.classList.add("has-welcome");
         }
@@ -30,7 +31,7 @@
 
     <!-- Full-Viewport Welcome Screen: 4K Cumbrian River Survey with Living 3D RG Compass -->
     <div class="welcome-screen cinema-welcome-stage" id="welcome-screen" role="dialog" aria-modal="true" aria-labelledby="welcome-heading" data-welcome>
-      <!-- Looping Responsive Video Background (4K Landscape Desktop / 9:16 Portrait Mobile) -->
+      <!-- Looping 4K Landscape Video Background (Loaded only when welcome screen is active on desktop) -->
       <div class="cinema-stage" id="cinemaStage" aria-hidden="true">
         <video
           class="cinema-media"
@@ -38,12 +39,8 @@
           muted
           loop
           playsinline
-          webkit-playsinline
-          preload="auto"
+          poster="assets/video/cumbria-river-survey-4k-poster.jpg"
           data-desktop-src="assets/video/cumbria-river-survey-4k.mp4"
-          data-desktop-poster="assets/video/cumbria-river-survey-4k-poster.jpg"
-          data-mobile-src="assets/video/cumbria-river-survey-mobile.mp4?v=20261116b"
-          data-mobile-poster="assets/video/cumbria-river-survey-mobile-poster.jpg?v=20261116b"
           id="bgVideo"
         >
           <img
@@ -55,45 +52,11 @@
         <script>
           (function () {
             var v = document.getElementById("bgVideo");
-            if (!v || !window.matchMedia) return;
-            var mq = window.matchMedia("(max-width: 768px), ((orientation: portrait) and (max-width: 1024px))");
-            var rm = window.matchMedia("(prefers-reduced-motion: reduce)");
-            function ensurePlaying() {
-              if (rm.matches) return;
-              v.defaultMuted = true;
-              v.muted = true;
-              v.playsInline = true;
-              v.autoplay = true;
-              v.loop = true;
-              if (v.paused) {
-                var p = v.play();
-                if (p && typeof p.catch === "function") p.catch(function () {});
-              }
-            }
-            function syncVideoSource() {
-              var isMob = mq.matches;
-              var nextSrc = isMob ? v.dataset.mobileSrc : v.dataset.desktopSrc;
-              var nextPoster = isMob ? v.dataset.mobilePoster : v.dataset.desktopPoster;
-              v.defaultMuted = true;
-              v.muted = true;
-              v.playsInline = true;
-              v.setAttribute("playsinline", "");
-              v.setAttribute("webkit-playsinline", "");
-              if (nextPoster && v.getAttribute("poster") !== nextPoster) {
-                v.setAttribute("poster", nextPoster);
-              }
-              if (nextSrc && v.getAttribute("src") !== nextSrc) {
-                v.src = nextSrc;
-                v.load();
-              }
-              ensurePlaying();
-            }
-            v.addEventListener("loadeddata", ensurePlaying);
-            v.addEventListener("canplay", ensurePlaying);
-            window.addEventListener("touchstart", ensurePlaying, { passive: true, once: true });
-            syncVideoSource();
-            if (mq.addEventListener) {
-              mq.addEventListener("change", syncVideoSource);
+            if (!v || !document.documentElement.classList.contains("has-welcome")) return;
+            v.src = v.dataset.desktopSrc;
+            v.load();
+            if (!window.matchMedia("(prefers-reduced-motion: reduce)").matches) {
+              v.play().catch(function () {});
             }
           })();
         </script>
