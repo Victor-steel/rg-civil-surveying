@@ -38,11 +38,12 @@
           muted
           loop
           playsinline
+          webkit-playsinline
           preload="auto"
           data-desktop-src="assets/video/cumbria-river-survey-4k.mp4"
           data-desktop-poster="assets/video/cumbria-river-survey-4k-poster.jpg"
-          data-mobile-src="assets/video/cumbria-river-survey-mobile.mp4"
-          data-mobile-poster="assets/video/cumbria-river-survey-mobile-poster.jpg"
+          data-mobile-src="assets/video/cumbria-river-survey-mobile.mp4?v=20261116b"
+          data-mobile-poster="assets/video/cumbria-river-survey-mobile-poster.jpg?v=20261116b"
           id="bgVideo"
         >
           <img
@@ -56,24 +57,43 @@
             var v = document.getElementById("bgVideo");
             if (!v || !window.matchMedia) return;
             var mq = window.matchMedia("(max-width: 768px), ((orientation: portrait) and (max-width: 1024px))");
-            function syncVideoSource(shouldPlay) {
+            var rm = window.matchMedia("(prefers-reduced-motion: reduce)");
+            function ensurePlaying() {
+              if (rm.matches) return;
+              v.defaultMuted = true;
+              v.muted = true;
+              v.playsInline = true;
+              v.autoplay = true;
+              v.loop = true;
+              if (v.paused) {
+                var p = v.play();
+                if (p && typeof p.catch === "function") p.catch(function () {});
+              }
+            }
+            function syncVideoSource() {
               var isMob = mq.matches;
               var nextSrc = isMob ? v.dataset.mobileSrc : v.dataset.desktopSrc;
               var nextPoster = isMob ? v.dataset.mobilePoster : v.dataset.desktopPoster;
+              v.defaultMuted = true;
+              v.muted = true;
+              v.playsInline = true;
+              v.setAttribute("playsinline", "");
+              v.setAttribute("webkit-playsinline", "");
               if (nextPoster && v.getAttribute("poster") !== nextPoster) {
                 v.setAttribute("poster", nextPoster);
               }
               if (nextSrc && v.getAttribute("src") !== nextSrc) {
-                v.setAttribute("src", nextSrc);
+                v.src = nextSrc;
                 v.load();
-                if (shouldPlay && !window.matchMedia("(prefers-reduced-motion: reduce)").matches) {
-                  v.play().catch(function () {});
-                }
               }
+              ensurePlaying();
             }
-            syncVideoSource(false);
+            v.addEventListener("loadeddata", ensurePlaying);
+            v.addEventListener("canplay", ensurePlaying);
+            window.addEventListener("touchstart", ensurePlaying, { passive: true, once: true });
+            syncVideoSource();
             if (mq.addEventListener) {
-              mq.addEventListener("change", function () { syncVideoSource(true); });
+              mq.addEventListener("change", syncVideoSource);
             }
           })();
         </script>
