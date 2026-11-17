@@ -5876,8 +5876,9 @@ html.welcome-entering .compass-relief-img {
   transform: translateX(4px);
 }
 
-/* Mobile & portrait screens skip the welcome screen for now until dedicated vertical AI video is ready */
-@media (max-width: 768px), (orientation: portrait) and (max-width: 1024px) {
+/* Touch phones & tablets skip the welcome screen for now until dedicated vertical AI video is ready
+   (Desktop browsers in split-screen/half-screen windows retain pointer: fine and keep the welcome screen) */
+@media (hover: none) and (pointer: coarse) and (max-width: 1024px) {
   html.has-welcome body {
     overflow: auto;
   }

@@ -14,12 +14,15 @@
     <link rel="preconnect" href="https://fonts.googleapis.com" />
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
     <link href="https://fonts.googleapis.com/css2?family=DM+Mono:ital,wght@0,400;0,500;1,400&family=Space+Grotesk:wght@400;500;600;700&display=swap" rel="stylesheet" />
-    <link rel="stylesheet" href="styles.css?v=20261116-nomobwelcome" />
-    <!-- Welcome screen: Living 3D Compass & 4K Cinema Welcome Entrance (Desktop only for now) -->
+    <link rel="stylesheet" href="styles.css?v=20261117-desktopfix" />
+    <!-- Welcome screen: Living 3D Compass & 4K Cinema Welcome Entrance (Desktop active; actual touch phones/tablets skip for now) -->
     <script>
-      // Show living welcome screen on desktop on fresh visit and refresh; skip on mobile/portrait until mobile video is ready
-      var isMobileOrPortrait = window.matchMedia && window.matchMedia("(max-width: 768px), ((orientation: portrait) and (max-width: 1024px))").matches;
-      if (!isMobileOrPortrait && !location.search) {
+      // Show living welcome screen on desktop (including split/half-screen windows) on every visit/refresh;
+      // only skip on actual mobile/touch phones & tablets until mobile video is ready
+      var isMobileDevice =
+        /Mobi|Android|iPhone|iPad|iPod/i.test(navigator.userAgent) ||
+        (window.matchMedia && window.matchMedia("(hover: none) and (pointer: coarse) and (max-width: 1024px)").matches);
+      if (!isMobileDevice && !location.search) {
         if (!location.hash || location.hash === "#top" || location.hash === "#coverage") {
           document.documentElement.classList.add("has-welcome");
         }

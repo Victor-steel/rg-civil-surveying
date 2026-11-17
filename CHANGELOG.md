@@ -2,6 +2,8 @@
 
 Newest first. One line per change: date, tool, what changed. Add yours after every edit.
 
+- 2026-11-17 (Antigravity): Fixed desktop welcome screen visibility in split/half-screen desktop browser windows (`index.html`, `styles.css` + dist/ & GitHub Pages): narrowed the mobile skip rule from width-only `(max-width: 768px)` to touch/mobile device detection (`Mobi|Android|iPhone|iPad|iPod` and `(hover: none) and (pointer: coarse) and (max-width: 1024px)`) so half-screen desktop windows (e.g. `729×867`) always display the full 4K desktop welcome screen while phones still go straight to the homepage.
+
 - 2026-11-16 (Antigravity): Disabled welcome screen overlay on mobile and portrait viewports (`(max-width: 768px), (orientation: portrait) and (max-width: 1024px)`) in `index.html` and `styles.css` (+ dist/ & GitHub Pages) so phones land straight on the homepage hero with zero video overhead until a native Google Flow vertical video is generated from `assets/generated/cumbria-river-survey-mobile-clean.jpg`; kept desktop 4K widescreen welcome screen untouched and restored `cinema-welcome.html` from backup.
 
 - 2026-11-16 (Antigravity): Upgraded mobile portrait river video (`assets/video/cumbria-river-survey-mobile.mp4`) and iOS/Android autoplay reliability in `index.html` and `cinema-welcome.html` (+ dist/ & GitHub Pages): injected real rolling sky cloud billows and churning river rapid turbulence extracted from the 4K desktop footage on top of 2.7x faster perspective downstream advection, added mist drifting along the mountain ridge, enforced `muted` + `playsInline` + `webkit-playsinline` playback hooks with `?v=20261116b` cache-busting so phones immediately play the lively river and cloud motion while desktop remains untouched.
