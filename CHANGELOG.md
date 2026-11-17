@@ -2,6 +2,8 @@
 
 Newest first. One line per change: date, tool, what changed. Add yours after every edit.
 
+- 2026-11-17 (Antigravity): Added isolated mobile WebGL welcome screen preview `mobile-welcome-preview.html` + mask map `assets/generated/cumbria-river-survey-mobile-masks.png` (+ dist/ & GitHub Pages): exact portrait mobile layout (`390×844` Retina crisp, yellow tripod visible on right gravel bank, 3D cutout RG compass, optical iris transition into `index.html`) with live 60fps GLSL shader river current refraction/shimmer and moody overcast sky cloud drift, zero double-exposure ghosting, and zero changes to desktop or live mobile homepage.
+
 - 2026-11-17 (Antigravity): Restored the optical iris portal fly-through transition on the `index.html` desktop welcome screen (`index.html`, `styles.css`, `app.js` + dist/ & GitHub Pages): replaced the flat upward wipe with the precision bearing calibration lock, circular optical aperture opening inside the 3D RG compass ring (`#cinemaPortalVeil` radial mask), and smooth camera fly-through straight through the transparent sky gap between the total station and steelwork into the live homepage hero (~1.2s total, verified at 1440×900 and 729×867 split-screen). Backup: `_backup-before-desktop-iris-transition-2026-11-17/`.
 
 - 2026-11-17 (Antigravity): Added permanent hard lock rule across `.agents/rules/rg-civil-surveying-desktop-lock.md`, `.cursor/rules/rg-civil-surveying.mdc`, `AGENTS.md`, `GEMINI.md`, and `CLAUDE.md` (+ dist/) requiring all AI tools to completely leave desktop untouched (including split/half-screen desktop browser windows) until Luke explicitly instructs otherwise, and to treat desktop and mobile welcome screens as two separate entities.
