@@ -1904,25 +1904,193 @@ const initWelcomeScreen = () => {
     if (medallion) {
       medallion.style.transform = "";
       medallion.style.animation = "";
+      void medallion.offsetWidth;
     }
-
-    root.classList.add("welcome-opening", "welcome-entering");
-    document.body.style.overflow = "visible";
 
     window.removeEventListener("wheel", onWheel);
     window.removeEventListener("keydown", onKey);
     window.removeEventListener("touchstart", onTouchStart);
     window.removeEventListener("touchend", onTouchEnd);
 
-    // After the compass bearing lock and lift animation, complete entrance
-    setTimeout(() => {
+    const compassStage = welcome.querySelector("#compassStage");
+    const bearingRing = compassStage?.querySelector(".compass-transition-ring");
+    const veil = welcome.querySelector("#cinemaPortalVeil");
+    const scene = welcome.querySelector("#cinemaStage");
+    const mainEl = document.getElementById("main");
+    const headerEl = document.querySelector(".site-header");
+
+    if (reducedMotion.matches || !compassStage || !veil || !mainEl) {
+      root.classList.add("welcome-opening", "welcome-entering");
       welcome.classList.add("is-leaving");
       setTimeout(() => {
-        root.classList.remove("has-welcome", "welcome-opening", "welcome-entering");
+        root.classList.remove("has-welcome", "welcome-opening", "welcome-entering", "welcome-pushing");
         document.body.style.overflow = "";
         welcome.hidden = true;
-      }, 720);
-    }, 380);
+        if (video) video.pause();
+      }, 300);
+      return;
+    }
+
+    const clamp01 = (v) => (v < 0 ? 0 : v > 1 ? 1 : v);
+    const easeOutCubic = (t) => 1 - Math.pow(1 - t, 3);
+    const smooth = (t) => t * t * (3 - 2 * t);
+
+    const LOCK_MS = 340;  // lean back, snap upright, precision bearing ring locks
+    const OPEN_MS = 220;  // homepage lights up inside the compass ring
+    const PUSH_MS = 860;  // camera flies smoothly through the compass centre
+
+    const vw = window.innerWidth;
+    const vh = window.innerHeight;
+    const sr = compassStage.getBoundingClientRect();
+    const cx = sr.left + sr.width / 2;
+    const cy = sr.top + sr.height / 2;
+    const r0 = sr.width * 0.24;
+    // Clear sky gap between total station and buildings inside the cutout emblem
+    const GAP_X = 0.541;
+    const GAP_Y = 0.39;
+    const fx = sr.left + sr.width * GAP_X;
+    const fy = sr.top + sr.height * GAP_Y;
+
+    const coversAll = (s) => {
+      const pcx = fx + s * (cx - fx);
+      const pcy = fy + s * (cy - fy);
+      const R = r0 * s;
+      return [[0, 0], [vw, 0], [0, vh], [vw, vh]].every((c) => Math.hypot(c[0] - pcx, c[1] - pcy) <= R);
+    };
+
+    let lo = 1;
+    let hi = 2;
+    while (!coversAll(hi) && hi < 2000) hi *= 2;
+    for (let i = 0; i < 24; i++) {
+      const mid = (lo + hi) / 2;
+      if (coversAll(mid)) hi = mid; else lo = mid;
+    }
+
+    const GAP_CLEAR = 0.069;
+    const reachF = Math.hypot(Math.max(fx, vw - fx), Math.max(fy, vh - fy));
+    const sClear = Math.max(hi * 1.05, (reachF / (sr.width * GAP_CLEAR)) * 1.04);
+    const logMax = Math.log(sClear);
+    const pCovered = Math.pow(Math.log(hi * 1.02) / logMax, 1 / 1.75);
+
+    // Frame the hero visual cleanly inside the compass portal at first, settling as we arrive
+    const K0 = 0.8;
+    let fdx = 0;
+    let fdy = 0;
+    const hv = mainEl.querySelector(".hero-visual");
+    if (hv) {
+      const hr = hv.getBoundingClientRect();
+      const hx = hr.left + hr.width * 0.5;
+      const hy = hr.top + Math.min(hr.height, vh) * 0.4;
+      fdx = Math.max(-vw * 0.6, Math.min(vw * 0.6, -K0 * (hx - fx)));
+      fdy = Math.max(-vh * 0.6, Math.min(vh * 0.6, -K0 * (hy - fy)));
+    }
+
+    let sceneBase = "";
+    if (scene) {
+      const ct = window.getComputedStyle(scene).transform;
+      sceneBase = ct && ct !== "none" ? ct : "";
+      scene.style.animation = "none";
+      scene.style.transform = sceneBase;
+    }
+
+    mainEl.style.transformOrigin = fx.toFixed(1) + "px " + fy.toFixed(1) + "px";
+    mainEl.style.willChange = "transform";
+    if (headerEl) headerEl.style.opacity = "0";
+    compassStage.style.transformOrigin = (GAP_X * 100) + "% " + (GAP_Y * 100) + "%";
+    root.classList.add("welcome-entering");
+
+    const t0 = performance.now();
+    let pushing = false;
+    let landed = false;
+    let finished = false;
+
+    const finish = () => {
+      if (finished) return;
+      finished = true;
+      root.classList.add("welcome-opening");
+      root.classList.remove("has-welcome", "welcome-entering", "welcome-pushing");
+      mainEl.style.transform = "";
+      mainEl.style.transformOrigin = "";
+      mainEl.style.willChange = "";
+      if (headerEl) headerEl.style.opacity = "";
+      veil.style.webkitMaskImage = "";
+      veil.style.maskImage = "";
+      compassStage.style.transform = "";
+      compassStage.style.opacity = "";
+      if (bearingRing) {
+        bearingRing.style.transition = "";
+        bearingRing.style.opacity = "";
+      }
+      if (scene) {
+        scene.style.transform = "";
+        scene.style.animation = "";
+      }
+      document.body.style.overflow = "";
+      welcome.hidden = true;
+      if (video) video.pause();
+    };
+
+    const frame = (now) => {
+      if (finished) return;
+      const t = now - t0;
+      const open = easeOutCubic(clamp01((t - (LOCK_MS - 120)) / OPEN_MS));
+      const p = clamp01((t - LOCK_MS) / PUSH_MS);
+      const ease = Math.pow(p, 1.75);
+      const s = Math.exp(logMax * ease);
+      const q = clamp01(p / pCovered);
+      const drift = 1 - smooth(clamp01((q - 0.3) / 0.7));
+      const exit = smooth(clamp01((p - pCovered) / (1 - pCovered)));
+
+      if (p > 0 && !pushing) {
+        pushing = true;
+        root.classList.add("welcome-pushing");
+      }
+      if (!landed && p >= pCovered - 0.12) {
+        landed = true;
+        root.classList.add("welcome-opening");
+      }
+
+      compassStage.style.transform = "scale(" + s.toFixed(4) + ")";
+      compassStage.style.opacity = (1 - exit).toFixed(3);
+      if (bearingRing && p > 0) {
+        bearingRing.style.transition = "none";
+        bearingRing.style.opacity = (1 - smooth(clamp01((p - 0.3) / 0.4))).toFixed(3);
+      }
+
+      const R = r0 * s * open;
+      if (R > 0.5) {
+        const pcx = fx + s * (cx - fx);
+        const pcy = fy + s * (cy - fy);
+        const maskVal =
+          "radial-gradient(circle at " +
+          pcx.toFixed(1) + "px " + pcy.toFixed(1) + "px, transparent " +
+          Math.max(0, R - 0.6).toFixed(1) + "px, #000 " +
+          (R + 0.6).toFixed(1) + "px)";
+        veil.style.webkitMaskImage = maskVal;
+        veil.style.maskImage = maskVal;
+      }
+
+      mainEl.style.transform =
+        "translate(" + (fdx * drift).toFixed(1) + "px, " + (fdy * drift).toFixed(1) + "px) " +
+        "scale(" + (K0 + (1 - K0) * smooth(q)).toFixed(4) + ")";
+
+      if (headerEl) {
+        headerEl.style.opacity = smooth(clamp01((q - 0.35) / 0.65)).toFixed(3);
+      }
+
+      if (scene) {
+        scene.style.transform = sceneBase + " scale(" + (1 + 0.3 * ease).toFixed(4) + ")";
+      }
+
+      if (p < 1) {
+        requestAnimationFrame(frame);
+      } else {
+        setTimeout(finish, 40);
+      }
+    };
+    requestAnimationFrame(frame);
+
+    setTimeout(finish, LOCK_MS + PUSH_MS + 650);
   };
 
   const onWheel = (e) => {

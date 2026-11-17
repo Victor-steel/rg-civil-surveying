@@ -14,7 +14,7 @@
     <link rel="preconnect" href="https://fonts.googleapis.com" />
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
     <link href="https://fonts.googleapis.com/css2?family=DM+Mono:ital,wght@0,400;0,500;1,400&family=Space+Grotesk:wght@400;500;600;700&display=swap" rel="stylesheet" />
-    <link rel="stylesheet" href="styles.css?v=20261117-desktopfix" />
+    <link rel="stylesheet" href="styles.css?v=20261117-iris" />
     <!-- Welcome screen: Living 3D Compass & 4K Cinema Welcome Entrance (Desktop active; actual touch phones/tablets skip for now) -->
     <script>
       // Show living welcome screen on desktop (including split/half-screen windows) on every visit/refresh;
@@ -34,39 +34,42 @@
 
     <!-- Full-Viewport Welcome Screen: 4K Cumbrian River Survey with Living 3D RG Compass -->
     <div class="welcome-screen cinema-welcome-stage" id="welcome-screen" role="dialog" aria-modal="true" aria-labelledby="welcome-heading" data-welcome>
-      <!-- Looping 4K Landscape Video Background (Loaded only when welcome screen is active on desktop) -->
-      <div class="cinema-stage" id="cinemaStage" aria-hidden="true">
-        <video
-          class="cinema-media"
-          autoplay
-          muted
-          loop
-          playsinline
-          poster="assets/video/cumbria-river-survey-4k-poster.jpg"
-          data-desktop-src="assets/video/cumbria-river-survey-4k.mp4"
-          id="bgVideo"
-        >
-          <img
+      <!-- Portal Veil (masked to open a circular optical aperture through the compass centre) -->
+      <div class="cinema-portal-veil" id="cinemaPortalVeil" aria-hidden="true">
+        <!-- Looping 4K Landscape Video Background (Loaded only when welcome screen is active on desktop) -->
+        <div class="cinema-stage" id="cinemaStage" aria-hidden="true">
+          <video
             class="cinema-media"
-            src="assets/video/cumbria-river-survey-4k-poster.jpg"
-            alt="RG Civil Engineering and Surveying Cumbrian River Survey"
-          />
-        </video>
-        <script>
-          (function () {
-            var v = document.getElementById("bgVideo");
-            if (!v || !document.documentElement.classList.contains("has-welcome")) return;
-            v.src = v.dataset.desktopSrc;
-            v.load();
-            if (!window.matchMedia("(prefers-reduced-motion: reduce)").matches) {
-              v.play().catch(function () {});
-            }
-          })();
-        </script>
-      </div>
+            autoplay
+            muted
+            loop
+            playsinline
+            poster="assets/video/cumbria-river-survey-4k-poster.jpg"
+            data-desktop-src="assets/video/cumbria-river-survey-4k.mp4"
+            id="bgVideo"
+          >
+            <img
+              class="cinema-media"
+              src="assets/video/cumbria-river-survey-4k-poster.jpg"
+              alt="RG Civil Engineering and Surveying Cumbrian River Survey"
+            />
+          </video>
+          <script>
+            (function () {
+              var v = document.getElementById("bgVideo");
+              if (!v || !document.documentElement.classList.contains("has-welcome")) return;
+              v.src = v.dataset.desktopSrc;
+              v.load();
+              if (!window.matchMedia("(prefers-reduced-motion: reduce)").matches) {
+                v.play().catch(function () {});
+              }
+            })();
+          </script>
+        </div>
 
-      <!-- Subtle Dark Gradient Behind Central Composition -->
-      <div class="cinema-backdrop" aria-hidden="true"></div>
+        <!-- Subtle Dark Gradient Behind Central Composition -->
+        <div class="cinema-backdrop" aria-hidden="true"></div>
+      </div>
 
       <!-- Central Focal Composition -->
       <div class="cinema-center" id="welcomeCenter">
@@ -947,6 +950,6 @@
       </div>
     </div>
 
-    <script src="app.js?v=20261114-servicesphone"></script>
+    <script src="app.js?v=20261117-iris"></script>
   </body>
 </html>

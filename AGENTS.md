@@ -3,6 +3,12 @@
 Website: one-page site plus four service pages for **RG Civil Engineering and Surveying Ltd**.
 Owner: Luke. He is not a software engineer: explain changes in plain words, make small changes one at a time, and don't restyle anything he didn't ask about.
 
+## HARD LOCK: Leave Desktop Completely Alone (Per Luke, 17 Nov 2026)
+
+- **COMPLETELY LEAVE DESKTOP ALONE UNTIL LUKE EXPLICITLY SAYS SO.**
+- Never change desktop layout, desktop CSS, desktop JS, desktop assets, or the desktop 4K welcome screen (`assets/video/cumbria-river-survey-4k.mp4`, compass medallion, headings, framing, or split/half-screen desktop display).
+- Treat mobile and desktop welcome screens as **two completely separate entities**. Isolate any mobile work strictly to touch phones/tablets (`Mobi|Android|iPhone|iPad|iPod` or `@media (hover: none) and (pointer: coarse) and (max-width: 1024px)`) so half-screen/split-screen desktop browser windows (like `729×867`) stay untouched.
+
 ## One folder, shared by every tool
 
 - THIS folder (`~/Projects/obsidian-brain/mocks/rg-civil-surveying`) is the only working copy. It is the folder the preview at http://127.0.0.1:4190 runs from. Antigravity, Claude, Cursor and Grok all edit these same files.

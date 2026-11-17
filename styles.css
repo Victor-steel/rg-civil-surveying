@@ -5587,17 +5587,24 @@ html.has-welcome .welcome-screen {
   display: grid;
   place-items: center;
   padding: clamp(24px, 5vh, 56px) clamp(20px, 5vw, 64px);
-  background: var(--ink);
+  background: transparent;
   color: var(--paper);
   overflow: hidden;
-  transition:
-    transform 0.72s cubic-bezier(0.23, 1, 0.32, 1),
-    opacity 0.65s cubic-bezier(0.23, 1, 0.32, 1);
+  transition: opacity 0.28s ease;
 }
 
 html.has-welcome .welcome-screen.is-leaving {
-  transform: translateY(-100%);
   opacity: 0;
+  pointer-events: none;
+}
+
+/* Veil carrying the 4K river video + backdrop — masked open from the compass centre during entry */
+.cinema-portal-veil {
+  position: absolute;
+  inset: 0;
+  z-index: 1;
+  background: var(--ink);
+  overflow: hidden;
   pointer-events: none;
 }
 
@@ -5607,7 +5614,7 @@ html.has-welcome .welcome-screen.is-leaving {
   inset: -2.5%;
   width: 105%;
   height: 105%;
-  z-index: -2;
+  z-index: 0;
   pointer-events: none;
   will-change: transform;
   animation: stageBreathe 20s ease-in-out infinite alternate;
@@ -5632,7 +5639,7 @@ html.has-welcome .welcome-screen.is-leaving {
 .cinema-backdrop {
   position: absolute;
   inset: 0;
-  z-index: -1;
+  z-index: 1;
   pointer-events: none;
   background:
     radial-gradient(
@@ -5653,7 +5660,7 @@ html.has-welcome .welcome-screen.is-leaving {
 /* Spacious, Centred Brand Arrangement */
 .cinema-center {
   position: relative;
-  z-index: 2;
+  z-index: 4;
   display: flex;
   flex-direction: column;
   align-items: center;
@@ -5764,12 +5771,30 @@ html.welcome-entering .compass-transition-ring {
     transform 0.34s cubic-bezier(0.2, 1.2, 0.35, 1);
 }
 
+html.welcome-entering .compass-emblem-stage {
+  will-change: transform, opacity;
+}
+
 html.welcome-entering .compass-medallion-3d {
   animation: compassBearingLock 0.36s cubic-bezier(0.4, 0, 0.2, 1) forwards !important;
 }
 
 html.welcome-entering .compass-relief-img {
   transform: translateZ(18px);
+}
+
+/* Drop soft filter shadow while zooming past camera for locked 60fps clarity */
+html.welcome-pushing .compass-medallion-3d {
+  filter: none;
+}
+
+/* Hold first hero photo still during portal flight so camera settles cleanly */
+html.welcome-entering .hero-slide {
+  transition: none !important;
+}
+html.welcome-entering .hero-slide[data-hero-slide="0"] img {
+  transform: scale(1) !important;
+  transition: none !important;
 }
 
 @keyframes compassBearingLock {
