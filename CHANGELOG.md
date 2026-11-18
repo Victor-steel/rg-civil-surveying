@@ -2,6 +2,10 @@
 
 Newest first. One line per change: date, tool, what changed. Add yours after every edit.
 
+- 2026-11-18 (Antigravity): Replaced synthetic mobile water/cloud shaders with authentic 9.0s Google Flow 4K footage (`assets/video/cumbria-river-survey-4k.mp4[:, 1160:2375]` -> `1080×1920` H.264 `assets/video/cumbria-river-survey-mobile.mp4` + poster) in `mobile-welcome-preview.html` (+ dist/ & GitHub Pages): preserves real Google Flow billowing clouds, fell mist, and rushing whitewater rapids identically while sub-pixel phase-tracking the gravel spit (`phaseCorrelate`) to seat the unmanned Leica yellow tripod cleanly on the right bank with zero desktop changes.
+
+- 2026-11-17 (Antigravity): Added hard rule across `AGENTS.md`, `.agents/rules/rg-civil-surveying-desktop-lock.md`, and `.cursor/rules/rg-civil-surveying.mdc` (+ dist/) never to copy or save files onto Luke's Desktop (always share/embed assets directly in chat instead), and removed temporary Desktop image copy.
+
 - 2026-11-17 (Antigravity): Added isolated mobile WebGL welcome screen preview `mobile-welcome-preview.html` + mask map `assets/generated/cumbria-river-survey-mobile-masks.png` (+ dist/ & GitHub Pages): exact portrait mobile layout (`390×844` Retina crisp, yellow tripod visible on right gravel bank, 3D cutout RG compass, optical iris transition into `index.html`) with live 60fps GLSL shader river current refraction/shimmer and moody overcast sky cloud drift, zero double-exposure ghosting, and zero changes to desktop or live mobile homepage.
 
 - 2026-11-17 (Antigravity): Restored the optical iris portal fly-through transition on the `index.html` desktop welcome screen (`index.html`, `styles.css`, `app.js` + dist/ & GitHub Pages): replaced the flat upward wipe with the precision bearing calibration lock, circular optical aperture opening inside the 3D RG compass ring (`#cinemaPortalVeil` radial mask), and smooth camera fly-through straight through the transparent sky gap between the total station and steelwork into the live homepage hero (~1.2s total, verified at 1440×900 and 729×867 split-screen). Backup: `_backup-before-desktop-iris-transition-2026-11-17/`.

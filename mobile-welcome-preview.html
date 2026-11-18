@@ -59,25 +59,24 @@
       pointer-events: none;
     }
 
-    /* Live WebGL living photograph stage (locked tripod camera, only water & clouds move) */
+    /* Real 9:16 Google Flow video background */
     .gl-stage {
       position: absolute;
-      inset: 0;
-      width: 100%;
-      height: 100%;
+      inset: -1.5%;
+      width: 103%;
+      height: 103%;
+      will-change: transform;
     }
 
-    #glCanvas, .fallback-photo {
+    .flow-video {
       position: absolute;
       inset: 0;
       width: 100%;
       height: 100%;
       display: block;
-    }
-
-    .fallback-photo {
       object-fit: cover;
-      object-position: 92% 50%;
+      object-position: 88% 50%;
+      filter: contrast(1.03) saturate(1.03) brightness(0.98);
     }
 
     /* Subtle central text scrim keeping tripod, river & fells clear */
@@ -288,12 +287,24 @@
   <main class="mobile-welcome" aria-labelledby="welcome-heading">
     <div class="portal-veil" id="portalVeil" aria-hidden="true">
       <div class="gl-stage" id="glStage">
-        <img
-          class="fallback-photo"
-          src="assets/generated/cumbria-river-survey-mobile-clean.jpg"
-          alt="RG Civil Engineering and Surveying Cumbrian River Survey"
-        />
-        <canvas id="glCanvas"></canvas>
+        <video
+          class="flow-video"
+          id="mobileBgVideo"
+          autoplay
+          muted
+          loop
+          playsinline
+          webkit-playsinline
+          preload="auto"
+          poster="assets/video/cumbria-river-survey-mobile-poster.jpg?v=20261118-flow"
+          src="assets/video/cumbria-river-survey-mobile.mp4?v=20261118-flow"
+        >
+          <img
+            class="flow-video"
+            src="assets/video/cumbria-river-survey-mobile-poster.jpg?v=20261118-flow"
+            alt="RG Civil Engineering and Surveying Cumbrian River Survey"
+          />
+        </video>
       </div>
       <div class="mobile-backdrop"></div>
     </div>
@@ -352,239 +363,26 @@
 
   <script>
     (function () {
-      const canvas = document.getElementById('glCanvas');
+      const video = document.getElementById('mobileBgVideo');
       const reducedMotion = window.matchMedia('(prefers-reduced-motion: reduce)');
-      const gl = canvas.getContext('webgl', { alpha: false, antialias: true, powerPreference: 'high-performance' });
-
-      if (gl && !reducedMotion.matches) {
-        const vsSrc = `
-          attribute vec2 a_pos;
-          varying vec2 v_uv;
-          void main() {
-            v_uv = a_pos * 0.5 + 0.5;
-            gl_Position = vec4(a_pos, 0.0, 1.0);
-          }
-        `;
-
-        const fsSrc = `
-          precision highp float;
-          varying vec2 v_uv;
-          uniform sampler2D u_photo;
-          uniform sampler2D u_masks;
-          uniform vec2 u_res;
-          uniform vec2 u_img;
-          uniform float u_time;
-
-          float hash(vec2 p) {
-            p = fract(p * vec2(123.34, 456.21));
-            p += dot(p, p + 45.32);
-            return fract(p.x * p.y);
-          }
-
-          float noise(vec2 p) {
-            vec2 i = floor(p);
-            vec2 f = fract(p);
-            f = f * f * (3.0 - 2.0 * f);
-            float a = hash(i);
-            float b = hash(i + vec2(1.0, 0.0));
-            float c = hash(i + vec2(0.0, 1.0));
-            float d = hash(i + vec2(1.0, 1.0));
-            return mix(mix(a, b, f.x), mix(c, d, f.x), f.y);
-          }
-
-          float fbm(vec2 p) {
-            float v = 0.0;
-            float a = 0.5;
-            mat2 rot = mat2(0.8, 0.6, -0.6, 0.8);
-            for (int i = 0; i < 4; i++) {
-              v += a * noise(p);
-              p = rot * p * 2.04;
-              a *= 0.5;
-            }
-            return v;
-          }
-
-          // Exact cover projection matching object-position: 92% 50%
-          vec2 coverUV(vec2 screenUV) {
-            float rView = u_res.x / max(u_res.y, 1.0);
-            float rImg = u_img.x / max(u_img.y, 1.0);
-            vec2 scale = vec2(1.0);
-            if (rView < rImg) {
-              scale.x = rView / rImg;
-            } else {
-              scale.y = rImg / rView;
-            }
-            vec2 align = vec2(0.92, 0.5);
-            // Invert Y so (0,0) = top-left in image texture space (UNPACK_FLIP_Y_WEBGL = true uses v=1 top)
-            return vec2(
-              (screenUV.x - align.x) * scale.x + align.x,
-              1.0 - ((1.0 - screenUV.y - align.y) * scale.y + align.y)
-            );
-          }
-
-          void main() {
-            vec2 uv = coverUV(v_uv);
-            vec4 baseCol = texture2D(u_photo, uv);
-            vec3 m = texture2D(u_masks, uv).rgb;
-            float waterMask = m.r;
-            float depth = m.g;
-            float skyMask = m.b;
-
-            vec3 col = baseCol.rgb;
-
-            // --- 1. CONTINUOUS NATURAL RIVER FLOW (Zero double-exposure ghosting) ---
-            if (waterMask > 0.005) {
-              // Perspective-scaled directional surface coordinates along river flow
-              // In texture space (v=1 top, v=0 bottom): downstream = (-x, -y), so sample upstream (+x, +y)
-              float pScale = mix(24.0, 8.0, depth);
-              vec2 flowVec = vec2(0.55, 0.84);
-              vec2 flowP = uv * vec2(pScale, pScale * 1.85) + flowVec * (u_time * mix(0.85, 2.05, depth));
-              vec2 flowP2 = uv * vec2(pScale * 1.55, pScale * 2.4) + vec2(0.32, 0.94) * (u_time * mix(1.05, 2.55, depth));
-
-              float n1 = fbm(flowP);
-              float n2 = fbm(flowP2);
-              float eps = 0.038;
-              float nx = fbm(flowP + vec2(eps, 0.0)) - n1;
-              float ny = fbm(flowP + vec2(0.0, eps)) - n1;
-
-              // Crisp optical water refraction along wave normals (keeps rocks sharp)
-              float refractAmp = mix(0.0016, 0.0052, depth) * waterMask;
-              vec2 ruv = clamp(uv + vec2(nx, ny) * refractAmp * 16.0, vec2(0.001), vec2(0.999));
-
-              // Tight dual-phase downstream current advection (zero smudgy crossfade)
-              float cyc1 = fract(u_time * 0.34);
-              float cyc2 = fract(cyc1 + 0.5);
-              float w1 = 1.0 - abs(2.0 * cyc1 - 1.0);
-              w1 = w1 * w1 * (3.0 - 2.0 * w1);
-              float throwAmt = mix(0.0045, 0.0145, depth) * waterMask;
-              vec2 adv1 = clamp(ruv + flowVec * ((cyc1 - 0.5) * throwAmt), vec2(0.001), vec2(0.999));
-              vec2 adv2 = clamp(ruv + flowVec * ((cyc2 - 0.5) * throwAmt), vec2(0.001), vec2(0.999));
-
-              vec3 waterSample = mix(texture2D(u_photo, adv2).rgb, texture2D(u_photo, adv1).rgb, w1);
-
-              // Directional sky reflection glint & streaming whitewater crests
-              float luma = dot(waterSample, vec3(0.299, 0.587, 0.114));
-              float crest = smoothstep(0.38, 0.78, n1 * 0.58 + n2 * 0.42);
-              float foamCatch = smoothstep(0.20, 0.62, luma);
-              vec3 glintCol = mix(vec3(0.76, 0.84, 0.90), vec3(0.97, 0.99, 1.0), foamCatch);
-              waterSample = mix(waterSample, glintCol, crest * (0.11 + 0.16 * foamCatch) * waterMask);
-              waterSample *= 1.0 + (n2 - 0.5) * 0.19 * waterMask;
-
-              col = mix(col, waterSample, waterMask);
-            }
-
-            // --- 2. NATURAL OVERCAST SKY CLOUD DRIFT (Strictly above fell ridge) ---
-            if (skyMask > 0.005) {
-              // Continuous horizontal overcast billow drift (zero sharp cutoff, locked mountain edge)
-              vec2 skyCoord = uv * vec2(3.2, 5.0) + vec2(-u_time * 0.095, u_time * 0.012);
-              vec2 skyDetail = uv * vec2(6.4, 9.2) + vec2(-u_time * 0.145, u_time * 0.018);
-              float c1 = fbm(skyCoord);
-              float c2 = fbm(skyDetail);
-              float cloudWave = (c1 * 0.68 + c2 * 0.32) - 0.5;
-
-              // Continuous gentle horizontal sky shear using tight phase advection in upper overcast
-              float upperSky = skyMask * smoothstep(0.76, 0.94, uv.y);
-              float sc1 = fract(u_time * 0.09);
-              float sc2 = fract(sc1 + 0.5);
-              float sw1 = 1.0 - abs(2.0 * sc1 - 1.0);
-              sw1 = sw1 * sw1 * (3.0 - 2.0 * sw1);
-              float cThrow = 0.022 * upperSky;
-              vec3 skyBase = mix(
-                texture2D(u_photo, clamp(uv + vec2(-(sc2 - 0.5) * cThrow, 0.0), vec2(0.001), vec2(0.999))).rgb,
-                texture2D(u_photo, clamp(uv + vec2(-(sc1 - 0.5) * cThrow, 0.0), vec2(0.001), vec2(0.999))).rgb,
-                sw1
-              );
-
-              // Deepen storm billows & brighten overcast breaks subtly in matching cool slate palette
-              vec3 darkStorm = skyBase * vec3(0.78, 0.82, 0.87);
-              vec3 lightBreak = min(vec3(1.0), skyBase * vec3(1.22, 1.23, 1.24) + vec3(0.04));
-              vec3 modSky = mix(darkStorm, lightBreak, smoothstep(-0.20, 0.22, cloudWave));
-
-              col = mix(col, modSky, skyMask * 0.84);
-            }
-
-            gl_FragColor = vec4(col, 1.0);
-          }
-        `;
-
-        function compile(type, src) {
-          const s = gl.createShader(type);
-          gl.shaderSource(s, src);
-          gl.compileShader(s);
-          return s;
+      function ensurePlay() {
+        if (!video) return;
+        if (reducedMotion.matches) {
+          video.pause();
+          return;
         }
-        const prog = gl.createProgram();
-        gl.attachShader(prog, compile(gl.VERTEX_SHADER, vsSrc));
-        gl.attachShader(prog, compile(gl.FRAGMENT_SHADER, fsSrc));
-        gl.linkProgram(prog);
-        gl.useProgram(prog);
-
-        const buf = gl.createBuffer();
-        gl.bindBuffer(gl.ARRAY_BUFFER, buf);
-        gl.bufferData(gl.ARRAY_BUFFER, new Float32Array([-1,-1, 1,-1, -1,1, 1,1]), gl.STATIC_DRAW);
-        const loc = gl.getAttribLocation(prog, 'a_pos');
-        gl.enableVertexAttribArray(loc);
-        gl.vertexAttribPointer(loc, 2, gl.FLOAT, false, 0, 0);
-
-        const uRes = gl.getUniformLocation(prog, 'u_res');
-        const uImg = gl.getUniformLocation(prog, 'u_img');
-        const uTime = gl.getUniformLocation(prog, 'u_time');
-        const uPhotoLoc = gl.getUniformLocation(prog, 'u_photo');
-        const uMaskLoc = gl.getUniformLocation(prog, 'u_masks');
-
-        let loadedCount = 0;
-        let imgW = 1080, imgH = 1920;
-
-        function loadTex(unit, url, onReady) {
-          const tex = gl.createTexture();
-          const img = new Image();
-          img.onload = function () {
-            gl.activeTexture(gl.TEXTURE0 + unit);
-            gl.bindTexture(gl.TEXTURE_2D, tex);
-            gl.pixelStorei(gl.UNPACK_FLIP_Y_WEBGL, true);
-            gl.texParameteri(gl.TEXTURE_2D, gl.TEXTURE_WRAP_S, gl.CLAMP_TO_EDGE);
-            gl.texParameteri(gl.TEXTURE_2D, gl.TEXTURE_WRAP_T, gl.CLAMP_TO_EDGE);
-            gl.texParameteri(gl.TEXTURE_2D, gl.TEXTURE_MIN_FILTER, gl.LINEAR);
-            gl.texParameteri(gl.TEXTURE_2D, gl.TEXTURE_MAG_FILTER, gl.LINEAR);
-            gl.texImage2D(gl.TEXTURE_2D, 0, gl.RGBA, gl.RGBA, gl.UNSIGNED_BYTE, img);
-            loadedCount++;
-            if (onReady) onReady(img);
-          };
-          img.src = url;
-        }
-
-        function resize() {
-          const dpr = Math.min(window.devicePixelRatio || 1, 2);
-          canvas.width = Math.round(canvas.clientWidth * dpr);
-          canvas.height = Math.round(canvas.clientHeight * dpr);
-          gl.viewport(0, 0, canvas.width, canvas.height);
-        }
-        window.addEventListener('resize', resize);
-        resize();
-
-        loadTex(0, 'assets/generated/cumbria-river-survey-mobile-clean.jpg', function (im) {
-          imgW = im.naturalWidth || 1080;
-          imgH = im.naturalHeight || 1920;
-        });
-        loadTex(1, 'assets/generated/cumbria-river-survey-mobile-masks.png');
-
-        gl.uniform1i(uPhotoLoc, 0);
-        gl.uniform1i(uMaskLoc, 1);
-
-        const startT = performance.now();
-        function draw(now) {
-          if (loadedCount === 2) {
-            gl.uniform2f(uRes, canvas.width, canvas.height);
-            gl.uniform2f(uImg, imgW, imgH);
-            gl.uniform1f(uTime, (now - startT) * 0.001);
-            gl.drawArrays(gl.TRIANGLE_STRIP, 0, 4);
-          }
-          requestAnimationFrame(draw);
-        }
-        requestAnimationFrame(draw);
-      } else {
-        canvas.style.display = 'none';
+        video.defaultMuted = true;
+        video.muted = true;
+        video.playsInline = true;
+        if (video.paused) video.play().catch(function () {});
       }
+      ensurePlay();
+      if (video) {
+        video.addEventListener('loadeddata', ensurePlay);
+        video.addEventListener('canplay', ensurePlay);
+      }
+      window.addEventListener('touchstart', ensurePlay, { passive: true, once: true });
+      if (reducedMotion.addEventListener) reducedMotion.addEventListener('change', ensurePlay);
 
       // ---- Compass Iris Portal Transition into Homepage ----
       const enterBtn = document.getElementById('enterSiteBtn');
