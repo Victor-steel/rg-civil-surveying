@@ -14,17 +14,20 @@
     <link rel="preconnect" href="https://fonts.googleapis.com" />
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
     <link href="https://fonts.googleapis.com/css2?family=DM+Mono:ital,wght@0,400;0,500;1,400&family=Space+Grotesk:wght@400;500;600;700&display=swap" rel="stylesheet" />
-    <link rel="stylesheet" href="styles.css?v=20261117-iris" />
-    <!-- Welcome screen: Living 3D Compass & 4K Cinema Welcome Entrance (Desktop active; actual touch phones/tablets skip for now) -->
+    <link rel="stylesheet" href="styles.css?v=20261119-mobilelive" />
+    <!-- Welcome screen: Living 3D Compass & Cinema Welcome Entrance (Desktop 4K landscape / Mobile 9:16 portrait) -->
     <script>
-      // Show living welcome screen on desktop (including split/half-screen windows) on every visit/refresh;
-      // only skip on actual mobile/touch phones & tablets until mobile video is ready
+      // Show living welcome screen on every fresh visit and refresh;
+      // tag actual mobile/touch phones & tablets so mobile loads dedicated 9:16 video + layout cleanly (desktop untouched)
       var isMobileDevice =
         /Mobi|Android|iPhone|iPad|iPod/i.test(navigator.userAgent) ||
         (window.matchMedia && window.matchMedia("(hover: none) and (pointer: coarse) and (max-width: 1024px)").matches);
-      if (!isMobileDevice && !location.search) {
+      if (!location.search) {
         if (!location.hash || location.hash === "#top" || location.hash === "#coverage") {
           document.documentElement.classList.add("has-welcome");
+          if (isMobileDevice) {
+            document.documentElement.classList.add("is-mobile-welcome");
+          }
         }
       }
     </script>
@@ -32,11 +35,11 @@
   <body>
     <a class="skip-link" href="#main">Skip to main content</a>
 
-    <!-- Full-Viewport Welcome Screen: 4K Cumbrian River Survey with Living 3D RG Compass -->
+    <!-- Full-Viewport Welcome Screen: Cumbrian River Survey with Living 3D RG Compass -->
     <div class="welcome-screen cinema-welcome-stage" id="welcome-screen" role="dialog" aria-modal="true" aria-labelledby="welcome-heading" data-welcome>
       <!-- Portal Veil (masked to open a circular optical aperture through the compass centre) -->
       <div class="cinema-portal-veil" id="cinemaPortalVeil" aria-hidden="true">
-        <!-- Looping 4K Landscape Video Background (Loaded only when welcome screen is active on desktop) -->
+        <!-- Looping Responsive Video Background (4K Landscape Desktop / 9:16 Portrait Mobile) -->
         <div class="cinema-stage" id="cinemaStage" aria-hidden="true">
           <video
             class="cinema-media"
@@ -44,8 +47,13 @@
             muted
             loop
             playsinline
+            webkit-playsinline
+            preload="auto"
             poster="assets/video/cumbria-river-survey-4k-poster.jpg"
             data-desktop-src="assets/video/cumbria-river-survey-4k.mp4"
+            data-desktop-poster="assets/video/cumbria-river-survey-4k-poster.jpg"
+            data-mobile-src="assets/video/cumbria-river-survey-mobile.mp4?v=20261118-flow"
+            data-mobile-poster="assets/video/cumbria-river-survey-mobile-poster.jpg?v=20261118-flow"
             id="bgVideo"
           >
             <img
@@ -58,11 +66,28 @@
             (function () {
               var v = document.getElementById("bgVideo");
               if (!v || !document.documentElement.classList.contains("has-welcome")) return;
-              v.src = v.dataset.desktopSrc;
+              var isMob = document.documentElement.classList.contains("is-mobile-welcome");
+              var nextSrc = isMob ? v.dataset.mobileSrc : v.dataset.desktopSrc;
+              var nextPoster = isMob ? v.dataset.mobilePoster : v.dataset.desktopPoster;
+              if (nextPoster) v.setAttribute("poster", nextPoster);
+              v.defaultMuted = true;
+              v.muted = true;
+              v.playsInline = true;
+              v.setAttribute("playsinline", "");
+              v.setAttribute("webkit-playsinline", "");
+              v.src = nextSrc;
               v.load();
-              if (!window.matchMedia("(prefers-reduced-motion: reduce)").matches) {
-                v.play().catch(function () {});
+              var rm = window.matchMedia("(prefers-reduced-motion: reduce)");
+              function playVid() {
+                if (!rm.matches && v.paused) {
+                  var p = v.play();
+                  if (p && p.catch) p.catch(function () {});
+                }
               }
+              playVid();
+              v.addEventListener("loadeddata", playVid);
+              v.addEventListener("canplay", playVid);
+              if (isMob) window.addEventListener("touchstart", playVid, { passive: true, once: true });
             })();
           </script>
         </div>

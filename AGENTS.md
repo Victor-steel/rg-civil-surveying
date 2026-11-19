@@ -6,6 +6,7 @@ Owner: Luke. He is not a software engineer: explain changes in plain words, make
 ## HARD LOCK: Leave Desktop Completely Alone (Per Luke, 17 Nov 2026)
 
 - **COMPLETELY LEAVE DESKTOP ALONE UNTIL LUKE EXPLICITLY SAYS SO.**
+- **NEVER COPY OR WRITE FILES TO LUKE'S DESKTOP (`~/Desktop/`)** unless he explicitly asks; keep assets in the workspace/artifact directory and paste/embed them directly in chat instead.
 - Never change desktop layout, desktop CSS, desktop JS, desktop assets, or the desktop 4K welcome screen (`assets/video/cumbria-river-survey-4k.mp4`, compass medallion, headings, framing, or split/half-screen desktop display).
 - Treat mobile and desktop welcome screens as **two completely separate entities**. Isolate any mobile work strictly to touch phones/tablets (`Mobi|Android|iPhone|iPad|iPod` or `@media (hover: none) and (pointer: coarse) and (max-width: 1024px)`) so half-screen/split-screen desktop browser windows (like `729×867`) stay untouched.
 
@@ -48,7 +49,7 @@ Owner: Luke. He is not a software engineer: explain changes in plain words, make
 ## Welcome Screen & Hero River Photo (Locked per Luke, 15–16 Nov 2026)
 
 - **Desktop Welcome Screen (LOCKED — never change unless Luke explicitly asks):** Keep the original desktop widescreen welcome screen untouched (`assets/video/cumbria-river-survey-4k.mp4`, existing 3D cutout RG compass, headings, and framing). Never alter desktop layout, framing, or background when adjusting mobile.
-- **Mobile / Portrait Welcome Screen:** Temporarily disabled on mobile/touch phones & tablets (`(hover: none) and (pointer: coarse) and (max-width: 1024px)` / mobile UA) so mobile visitors land straight on the homepage hero until a native AI-generated 9:16 portrait video matching desktop's cloud and river physics is ready. Split-screen/half-screen desktop browser windows continue showing the desktop welcome screen. The clean portrait plate is saved at `assets/generated/cumbria-river-survey-mobile-clean.jpg`.
+- **Mobile / Portrait Welcome Screen:** Active on actual touch phones & tablets (`Mobi|Android|iPhone|iPad|iPod` or `(hover: none) and (pointer: coarse) and (max-width: 1024px)`) via `html.is-mobile-welcome`, loading the dedicated 9:16 Google Flow river & cloud video (`assets/video/cumbria-river-survey-mobile.mp4`) with the tracked Leica yellow tripod on the right gravel spit and the exact optical iris portal transition. Split-screen/half-screen desktop browser windows continue showing the locked 4K desktop welcome screen untouched.
 - The river survey photograph must ALWAYS be the unmanned yellow tripod setup (`assets/generated/cumbria-river-survey-no-man.jpg` on desktop/hero, `assets/generated/cumbria-river-survey-mobile-clean.jpg` on mobile — zero people in frame).
 - Never replace it with photos showing people, surveyors, or high-vis workers.
 - When displayed as a welcome screen or visual, keep the photo clean: no heavy writing, title cards, or buttons blocking or covering the instrument.

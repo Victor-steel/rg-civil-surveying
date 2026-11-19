@@ -2,6 +2,8 @@
 
 Newest first. One line per change: date, tool, what changed. Add yours after every edit.
 
+- 2026-11-19 (Antigravity): Enabled the dedicated 9:16 Google Flow mobile welcome screen (`assets/video/cumbria-river-survey-mobile.mp4`) live on `index.html` (+ `styles.css`, `AGENTS.md`, `dist/`, GitHub Pages): strictly scoped via `html.is-mobile-welcome` for actual touch phones/tablets (`Mobi|Android|iPhone|iPad|iPod` or `(hover: none) and (pointer: coarse) and (max-width: 1024px)`) so full-screen and split-screen desktop stay 100% untouched; wired iOS/Android autoplay attributes (`playsinline`, `webkit-playsinline`, `defaultMuted`) and full Optical Iris Portal fly-through transition; verified live across `390×844` iPhone, `768×1024` iPad, `729×867` split-desktop, and `1440×900` desktop. Backup: `_backup-before-mobile-flow-live-2026-11-19/`.
+
 - 2026-11-18 (Antigravity): Replaced synthetic mobile water/cloud shaders with authentic 9.0s Google Flow 4K footage (`assets/video/cumbria-river-survey-4k.mp4[:, 1160:2375]` -> `1080×1920` H.264 `assets/video/cumbria-river-survey-mobile.mp4` + poster) in `mobile-welcome-preview.html` (+ dist/ & GitHub Pages): preserves real Google Flow billowing clouds, fell mist, and rushing whitewater rapids identically while sub-pixel phase-tracking the gravel spit (`phaseCorrelate`) to seat the unmanned Leica yellow tripod cleanly on the right bank with zero desktop changes.
 
 - 2026-11-17 (Antigravity): Added hard rule across `AGENTS.md`, `.agents/rules/rg-civil-surveying-desktop-lock.md`, and `.cursor/rules/rg-civil-surveying.mdc` (+ dist/) never to copy or save files onto Luke's Desktop (always share/embed assets directly in chat instead), and removed temporary Desktop image copy.
